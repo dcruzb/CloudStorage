@@ -15,7 +15,7 @@ func main() {
 	// escuta na porta tcp configurada
 	var inv dist.InvokerImpl
 	var lookup common.Lookup
-	inv.Register(1500, lookup)
+	inv.Register(0, lookup)
 	go inv.Invoke(shared.NAME_SERVER_PORT)
 	wg.Add(1)
 
