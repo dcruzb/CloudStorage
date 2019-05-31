@@ -11,12 +11,12 @@ import (
 
 func main() {
 	var wg sync.WaitGroup
-	lib.PrintlnInfo("Initializing server MyMiddleware")
+	lib.PrintlnInfo("Initializing server CloudStorage")
 
 	lp := dist.NewLookupProxy(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT)
 	err := lp.Bind("cloudFunctions", common.ClientProxy{"127.0.0.1", shared.MID_PORT, 2000})
 	if err != nil {
-		lib.PrintlnError("Error at lookup")
+		lib.PrintlnError("Error at lookup: ", err)
 	}
 
 	err = lp.Close()
@@ -42,5 +42,5 @@ func main() {
 		}(idx)
 	}*/
 	wg.Wait()
-	lib.PrintlnInfo("Fim do Servidor MyMiddleware")
+	lib.PrintlnInfo("Fim do Servidor CloudStorage")
 }

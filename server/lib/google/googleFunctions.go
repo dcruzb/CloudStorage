@@ -4,7 +4,7 @@ type GoogleFunctions struct {
 }
 
 func (gf GoogleFunctions) Price(size float64) float64 {
-	panic("implement me")
+	return size + 10
 }
 
 func (gf GoogleFunctions) Availability() bool {
