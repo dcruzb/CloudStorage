@@ -14,7 +14,7 @@ func main() {
 	lib.PrintlnInfo("Initializing server CloudStorage")
 
 	lp := dist.NewLookupProxy(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT)
-	err := lp.Bind("cloudFunctions", common.ClientProxy{"127.0.0.1", shared.MID_PORT, 2000})
+	err := lp.Bind("cloudFunctions", common.ClientProxy{shared.CLOUD_SERVER_IP, shared.CLOUD_SERVER_PORT, 2000})
 	if err != nil {
 		lib.PrintlnError("Error at lookup: ", err)
 	}
