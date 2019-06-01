@@ -1,15 +1,13 @@
 package lib
 
 import (
+	cloudLib "CloudStorage/server/lib"
 	"encoding/json"
 	"fmt"
 	"github.com/dcbCIn/MidCloud/lib"
 	"io/ioutil"
 	"os"
 )
-
-type AwsFunctions struct {
-}
 
 type Regions struct {
 	Br_sp Region `json:"South America (Sao Paulo)"`
@@ -21,6 +19,21 @@ type Region struct {
 
 type ServiceDetail struct {
 	Price float64
+}
+
+type AwsFunctions struct {
+}
+
+func (AwsFunctions) SendFile(file *os.File) (createdFile cloudLib.CloudFile, err error) {
+	panic("implement me")
+}
+
+func (AwsFunctions) GetFile() (file *os.File, err error) {
+	panic("implement me")
+}
+
+func (AwsFunctions) List(path string) (files []cloudLib.CloudFile, err error) {
+	panic("implement me")
 }
 
 func (AwsFunctions) Price(size float64) float64 {
