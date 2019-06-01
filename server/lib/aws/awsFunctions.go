@@ -1,56 +1,57 @@
 package lib
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/dcbCIn/MidCloud/lib"
 	"io/ioutil"
 	"os"
-	"encoding/json"
 )
 
-type CloudFunctionsImpl struct {
+type AwsFunctions struct {
 }
 
 type Regions struct {
-	br_sp Region `json:"South America (Sao Paulo)"`
+	Br_sp Region `json:"South America (Sao Paulo)"`
 }
 
 type Region struct {
-	tag_storage ServiceDetail `json:"Tags Storage per Tag Mo"`
+	Tag_storage ServiceDetail `json:"Tags Storage per Tag Mo"`
 }
 
 type ServiceDetail struct {
-	price float64
+	Price float64
 }
 
-func (CloudFunctionsImpl) Price(size float64) float64 {
+func (AwsFunctions) Price(size float64) float64 {
 
 	jsonFile, err := os.Open("data.json")
 
 	if err != nil {
 		//Caso tenha tido erro, ele é apresentado na tela
-		fmt.Println(err)
+		lib.PrintlnError("Erro ao abrir json. Erro", err)
 	}
 
 	defer jsonFile.Close()
 
-	byteValueJSON, _:= ioutil.ReadAll(jsonFile)
+	byteValueJSON, _ := ioutil.ReadAll(jsonFile)
 
 	//s := make([]string, 3)
 	regions := Regions{}
 
-	json.Unmarshal(byteValueJSON, &regions)
+	err = json.Unmarshal(byteValueJSON, &regions)
+	if err != nil {
+		lib.PrintlnError("Erro ao realizar unmarshal. Erro:", err)
+	}
 
 	//fmt.Println(regions.Name)
-	price := size * regions.br_sp.tag_storage.price
+	price := size * regions.Br_sp.Tag_storage.Price
 
 	fmt.Println(price)
 
 	return price
 }
 
-func (CloudFunctionsImpl) Availability() bool {
-
-	return nil
+func (AwsFunctions) Availability() bool {
+	return false
 }
-
-
