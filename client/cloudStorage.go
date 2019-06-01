@@ -1,57 +1,50 @@
 package main
 
-import (
-/*"CloudStorage/shared"
-"github.com/dcbCIn/MidCloud/distribution"
-"github.com/dcbCIn/MidCloud/lib"
-"time"*/
-)
-
 func main() {
 	// Todo finalizar proxy
 
 	/*lp := dist.NewLookupProxy(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT)
 	cp, err := lp.Lookup("cloudFunctions")
 	if err != nil {
-		lib.PrintlnError("Error at lookup")
+		cloudLib.PrintlnError("Error at lookup")
 	}
 	err = lp.Close()
 	if err != nil {
-		lib.PrintlnError("Error at closing lookup")
+		cloudLib.PrintlnError("Error at closing lookup")
 	}
 
 	//var jp dist.JankenpoProxy
 	// connect to server
 	//jp = *dist.NewJankenpoProxy(cp.Ip, cp.Port, cp.ObjectId)
 
-	lib.PrintlnInfo("Connected successfully")
-	lib.PrintlnInfo()
+	cloudLib.PrintlnInfo("Connected successfully")
+	cloudLib.PrintlnInfo()
 
 	//var player1Move, player2Move string
 	// loop
 	//start := time.Now()
 	for i := 0; i < shared.SAMPLE_SIZE; i++ {
-		lib.PrintlnMessage("Game", i)
+		cloudLib.PrintlnMessage("Game", i)
 
 	//	player1Move, player2Move = shared.GetMoves(auto)
 
 		// send request to server and receive reply at the same time
 	//	result, err := jp.Play(player1Move, player2Move)
 		if err != nil {
-			lib.FailOnError(err, "Erro ao obter resultado do jogo no servidor. Erro:")
+			cloudLib.FailOnError(err, "Erro ao obter resultado do jogo no servidor. Erro:")
 		}
 
-		lib.PrintlnMessage()
+		cloudLib.PrintlnMessage()
 		switch result {
 		case 1, 2:
-			lib.PrintlnMessage( "The winner is Player", result)
+			cloudLib.PrintlnMessage( "The winner is Player", result)
 		case 0:
-			lib.PrintlnMessage( "Draw")
+			cloudLib.PrintlnMessage( "Draw")
 		default:
-			lib.PrintlnMessage("Invalid move")
+			cloudLib.PrintlnMessage("Invalid move")
 		}
-		lib.PrintlnMessage( "------------------------------------------------------------------")
-		lib.PrintlnMessage()
+		cloudLib.PrintlnMessage( "------------------------------------------------------------------")
+		cloudLib.PrintlnMessage()
 		time.Sleep(shared.WAIT * time.Millisecond)
 	}
 	//elapsed = time.Since(start)
