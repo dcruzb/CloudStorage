@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	lib.PrintlnInfo("Initializing server CloudStorage")
+	lib.PrintlnInfo("Initializing server CloudStorageMonitor")
 
 	lp := dist.NewLookupProxy(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT)
 	err := lp.Bind("cloudMonitor", common.ClientProxy{Ip: shared.MONITOR_IP, Port: shared.MONITOR_PORT, ObjectId: 2000})
@@ -16,12 +16,14 @@ func main() {
 	err = lp.Close()
 	lib.FailOnError(err, "Error at closing lookup")
 
-	// escuta na porta tcp configurada
-	var inv dist.InvokerImpl
-	inv.Register(2000, common.Monitor{})
+	monitor := common.Monitor{}
+	go monitor.Start(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT, "cloudFunctions", "CloudFunctions")
 
+	// escuta na porta tcp configurada
+	inv := dist.InvokerImpl{}
+	inv.Register(2000, monitor)
 	err = inv.Invoke(shared.MONITOR_PORT)
 	lib.FailOnError(err, "Error calling invoker.")
 
-	lib.PrintlnInfo("Fim do Servidor CloudStorage")
+	lib.PrintlnInfo("Fim do Servidor CloudStorageMonitor")
 }
