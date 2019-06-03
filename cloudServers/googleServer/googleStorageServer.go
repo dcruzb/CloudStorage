@@ -19,7 +19,7 @@ func main() {
 
 	// escuta na porta tcp configurada
 	var inv dist.InvokerImpl
-	inv.Register(2000, google.GoogleFunctions{})
+	inv.Register(2000, &google.GoogleFunctions{})
 
 	err = inv.Invoke(shared.GOOGLE_SERVER_PORT)
 	lib.FailOnError(err, "Error calling invoker.")

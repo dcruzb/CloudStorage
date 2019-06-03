@@ -1,50 +1,61 @@
 package main
 
-func main() {
-	// Todo finalizar proxy
+import (
+	"CloudStorage/shared"
+	dist "github.com/dcbCIn/MidCloud/distribution"
+	"github.com/dcbCIn/MidCloud/lib"
+	"github.com/dcbCIn/MidCloud/services/common"
+	"time"
+)
 
-	/*lp := dist.NewLookupProxy(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT)
-	cp, err := lp.Lookup("cloudFunctions")
-	if err != nil {
-		cloudLib.PrintlnError("Error at lookup")
-	}
-	err = lp.Close()
-	if err != nil {
-		cloudLib.PrintlnError("Error at closing lookup")
-	}
+func main() {
+	// Todo criar proxy para StorageFunctions
+
+	lp := dist.NewLookupProxy(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT)
+	defer func() { err := lp.Close(); lib.FailOnError(err, "Error at closing lookup") }()
+
+	err := lp.Bind("AwsCloudFunctions", common.ClientProxy{Ip: shared.AWS_SERVER_IP, Port: shared.AWS_SERVER_PORT, ObjectId: 2000}) // Todo tirar daqui dpeois, somente para testes
+	lib.FailOnError(err, "Error at lookup.")
+
+	cp, err := lp.Lookup("AwsCloudFunctions")
+	lib.FailOnError(err, "Error at lookup.")
+
+	lib.PrintlnInfo("CP:", cp, "ip:", cp.Ip, "Port:", cp.Port, "ObjectId:", cp.ObjectId)
+
+	return
 
 	//var jp dist.JankenpoProxy
 	// connect to server
 	//jp = *dist.NewJankenpoProxy(cp.Ip, cp.Port, cp.ObjectId)
 
-	cloudLib.PrintlnInfo("Connected successfully")
-	cloudLib.PrintlnInfo()
+	lib.PrintlnInfo("Connected successfully")
+	lib.PrintlnInfo()
 
 	//var player1Move, player2Move string
 	// loop
 	//start := time.Now()
 	for i := 0; i < shared.SAMPLE_SIZE; i++ {
-		cloudLib.PrintlnMessage("Game", i)
+		lib.PrintlnMessage("Game", i)
 
-	//	player1Move, player2Move = shared.GetMoves(auto)
+		//	player1Move, player2Move = shared.GetMoves(auto)
 
 		// send request to server and receive reply at the same time
-	//	result, err := jp.Play(player1Move, player2Move)
+		//	result, err := jp.Play(player1Move, player2Move)
 		if err != nil {
-			cloudLib.FailOnError(err, "Erro ao obter resultado do jogo no servidor. Erro:")
+			lib.FailOnError(err, "Erro ao obter resultado do jogo no servidor. Erro:")
 		}
 
-		cloudLib.PrintlnMessage()
-		switch result {
+		lib.PrintlnMessage()
+		switch 1 {
 		case 1, 2:
-			cloudLib.PrintlnMessage( "The winner is Player", result)
+			lib.PrintlnMessage("The winner is Player", 1)
 		case 0:
-			cloudLib.PrintlnMessage( "Draw")
+			lib.PrintlnMessage("Draw")
 		default:
-			cloudLib.PrintlnMessage("Invalid move")
+			lib.PrintlnMessage("Invalid move")
 		}
-		cloudLib.PrintlnMessage( "------------------------------------------------------------------")
-		cloudLib.PrintlnMessage()
+		lib.PrintlnMessage("------------------------------------------------------------------")
+		lib.PrintlnMessage()
 		time.Sleep(shared.WAIT * time.Millisecond)
 	}
 	//elapsed = time.Since(start)

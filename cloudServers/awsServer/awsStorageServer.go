@@ -19,7 +19,7 @@ func main() {
 
 	// escuta na porta tcp configurada
 	var inv dist.InvokerImpl
-	inv.Register(2000, aws.AwsFunctions{})
+	inv.Register(2000, &aws.AwsFunctions{})
 
 	err = inv.Invoke(shared.AWS_SERVER_PORT)
 	lib.FailOnError(err, "Error calling invoker.")
