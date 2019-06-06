@@ -2,51 +2,58 @@ package awsLib
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/dcbCIn/MidCloud/lib"
 	"io/ioutil"
-	"os"
+	"net/http"
+	"strconv"
 )
 
+type JsonAWS struct {
+	Nuvem AWS `json:"regions"`
+}
+
+type AWS struct {
+	Regions Regions `json:"South America (Sao Paulo)"`
+}
+
 type Regions struct {
-	Br_sp Region `json:"South America (Sao Paulo)"`
+	Br_sp Region `json:"Tags Storage per Tag Mo"`
 }
 
 type Region struct {
-	Tag_storage ServiceDetail `json:"Tags Storage per Tag Mo"`
-}
-
-type ServiceDetail struct {
-	Price float64
+	Price string `json:"price"`
 }
 
 type Aws struct {
 }
 
 func (Aws) Price(size float64) float64 {
-	jsonFile, err := os.Open("data.json")
+	//jsonFile, err := os.Open("data.json")
 
-	if err != nil {
+	url := "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/s3/USD/current/s3.json"
+
+	response, erro := http.Get(url)
+
+	if erro != nil {
 		//Caso tenha tido erro, ele é apresentado na tela
-		lib.PrintlnError("Erro ao abrir json. Erro", err)
+		lib.PrintlnError("Erro ao abrir json. Erro", erro)
 	}
 
-	defer jsonFile.Close()
+	//defer jsonFile.Close()
 
-	byteValueJSON, _ := ioutil.ReadAll(jsonFile)
+	// lendo o json do response do http request
+	responseJson, erro := ioutil.ReadAll(response.Body)
 
-	//s := make([]string, 3)
-	regions := Regions{}
+	aws := JsonAWS{}
 
-	err = json.Unmarshal(byteValueJSON, &regions)
-	if err != nil {
-		lib.PrintlnError("Erro ao realizar unmarshal. Erro:", err)
+	erro = json.Unmarshal(responseJson, &aws)
+	if erro != nil {
+		lib.PrintlnError("Erro ao realizar unmarshal. Erro:", erro)
 	}
 
-	//fmt.Println(regions.Name)
-	price := size * regions.Br_sp.Tag_storage.Price
+	floatvalue, _ := strconv.ParseFloat(aws.Nuvem.Regions.Br_sp.Price, 64)
 
-	fmt.Println(price)
+	price := size * floatvalue
 
 	return price
 }
