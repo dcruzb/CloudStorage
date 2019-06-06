@@ -22,7 +22,6 @@ func (AwsFunctions) List(path string) (files []cloudLib.CloudFile, err error) {
 }
 
 func (AwsFunctions) Price(size float64) float64 {
-
 	// Todo usar cache dos dados
 	// Todo criar função para preencher o cache
 	// Todo obter arquivo data.json diretamente da AWS
