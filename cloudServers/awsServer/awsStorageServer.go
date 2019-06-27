@@ -12,7 +12,7 @@ func main() {
 	lib.PrintlnInfo("Initializing server AwsStorage")
 
 	lp := dist.NewLookupProxy(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT)
-	err := lp.Bind("AwsCloudFunctions", common.ClientProxy{Ip: shared.AWS_SERVER_IP, Port: shared.AWS_SERVER_PORT, ObjectId: 2000})
+	err := lp.Bind("awsCloudFunctions", common.ClientProxy{Ip: shared.AWS_SERVER_IP, Port: shared.AWS_SERVER_PORT, ObjectId: 2000})
 	lib.FailOnError(err, "Error at lookup.")
 	err = lp.Close()
 	lib.FailOnError(err, "Error at closing lookup")

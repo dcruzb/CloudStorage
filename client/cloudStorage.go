@@ -14,10 +14,10 @@ func main() {
 	lp := dist.NewLookupProxy(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT)
 	defer func() { err := lp.Close(); lib.FailOnError(err, "Error at closing lookup") }()
 
-	err := lp.Bind("AwsCloudFunctions", common.ClientProxy{Ip: shared.AWS_SERVER_IP, Port: shared.AWS_SERVER_PORT, ObjectId: 2000}) // Todo tirar daqui dpeois, somente para testes
+	err := lp.Bind("googleCloudFunctions", common.ClientProxy{Ip: shared.AWS_SERVER_IP, Port: shared.AWS_SERVER_PORT, ObjectId: 2000}) // Todo tirar daqui dpeois, somente para testes
 	lib.FailOnError(err, "Error at lookup.")
 
-	cp, err := lp.Lookup("AwsCloudFunctions")
+	cp, err := lp.Lookup("googleCloudFunctions")
 	lib.FailOnError(err, "Error at lookup.")
 
 	lib.PrintlnInfo("CP:", cp, "ip:", cp.Ip, "Port:", cp.Port, "ObjectId:", cp.ObjectId)
