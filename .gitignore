@@ -10,3 +10,12 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+server/lib/CloudFunctions.go
+.idea/workspace.xml
+.idea/encodings.xml
+server/lib/CloudFunctions.go
+.idea/vcs.xml
+.idea/CloudStorage.iml
+.idea/modules.xml
+.idea/misc.xml
+teste.go

@@ -1,10 +1,16 @@
 package awsLib
 
 import (
+	"CloudStorage/cloudLib"
 	"encoding/json"
 	"github.com/dcbCIn/MidCloud/lib"
+	"github.com/minio/minio-go"
 	"io/ioutil"
+	"log"
+
 	"net/http"
+	"os"
+
 	"strconv"
 )
 
@@ -56,4 +62,55 @@ func (Aws) Price(size float64) float64 {
 	price := size * floatvalue
 
 	return price
+}
+
+func (Aws) SendFile(file *os.File) (createdFile cloudLib.CloudFile, err error) {
+
+	endpoint := "s3.amazonaws.com"
+	accessKeyID := "AKIA4HA7C4NR5EBWXSHS"
+	secretAccessKey := "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"
+	useSSL := false
+
+	// Initialize minio client object.
+	minioClient, err := minio.New(endpoint, accessKeyID, secretAccessKey, useSSL)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Printf("%#v\n", minioClient) // minioClient is now setup
+
+	// Make a new bucket called mymusic.
+	bucketName := "porra"
+	location := "us-east-1"
+
+	err = minioClient.MakeBucket(bucketName, location)
+	if err != nil {
+		// Check to see if we already own this bucket (which happens if you run this twice)
+		exists, err := minioClient.BucketExists(bucketName)
+		if err == nil && exists {
+			log.Printf("Já existe %s\n", bucketName)
+		} else {
+			log.Fatalln(err)
+		}
+	} else {
+		log.Printf("Criado com sucesso %s\n", bucketName)
+	}
+
+
+	//file.Name()
+
+	// Upload the zip file
+	objectName := "mid-cloud.zip"
+	filePath := "mid-cloud.zip"
+	contentType := "application/zip"
+
+	// Upload the zip file with FPutObject
+	n, err := minioClient.FPutObject(bucketName, objectName, filePath, minio.PutObjectOptions{ContentType:contentType})
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Printf("Successfully uploaded %s of size %d\n", objectName, n)
+
+	return createdFile, nil
 }

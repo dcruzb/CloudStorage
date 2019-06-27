@@ -10,7 +10,9 @@ type AwsFunctions struct {
 }
 
 func (AwsFunctions) SendFile(file *os.File) (createdFile cloudLib.CloudFile, err error) {
-	panic("implement me")
+	//panic("implement me")
+	aws := awsLib.Aws{}
+	return aws.SendFile(file)
 }
 
 func (AwsFunctions) GetFile() (file *os.File, err error) {
