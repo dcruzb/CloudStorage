@@ -17,7 +17,7 @@ type AWS struct {
 }
 
 type Regions struct {
-	Br_sp Region `json:"Tags Storage per Tag Mo"`
+	Br_sp Region `json:"Standard Storage First 50 TB per GB Mo"`
 }
 
 type Region struct {
