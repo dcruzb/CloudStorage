@@ -22,7 +22,7 @@ func main() {
 	}
 	defer fileTeste.Close()
 
-	aws.SendFile(fileTeste)
+	aws.SendFile(fileTeste, "/cloudstorage/")
 
 	return
 

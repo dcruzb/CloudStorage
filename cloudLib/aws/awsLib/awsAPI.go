@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/dcbCIn/MidCloud/lib"
 	"github.com/minio/minio-go"
+	"io"
 	"io/ioutil"
 	"log"
 	"path/filepath"
@@ -66,7 +67,7 @@ func (Aws) Price(size float64) float64 {
 	return price
 }
 
-func (Aws) SendFile(file *os.File) (createdFile cloudLib.CloudFile, err error) {
+func (Aws) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile, err error) {
 
 	endpoint := "s3.amazonaws.com"
 	accessKeyID := "AKIA4HA7C4NR5EBWXSHS"
@@ -104,7 +105,7 @@ func (Aws) SendFile(file *os.File) (createdFile cloudLib.CloudFile, err error) {
 		return
 	}
 
-	n, err := minioClient.PutObject(bucketName, filepath.Base(file.Name()), file, fileStat.Size(), minio.PutObjectOptions{ContentType:"application/octet-stream"})
+	n, err := minioClient.PutObject(bucketName, path + filepath.Base(file.Name()), file, fileStat.Size(), minio.PutObjectOptions{ContentType:"application/octet-stream"})
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -113,4 +114,36 @@ func (Aws) SendFile(file *os.File) (createdFile cloudLib.CloudFile, err error) {
 	fmt.Println("Successfully uploaded bytes: ", n)
 
 	return createdFile, nil
+}
+
+func (Aws) GetFile(fileName string, path string) (file *os.File, err error) {
+	endpoint := "s3.amazonaws.com"
+	accessKeyID := "AKIA4HA7C4NR5EBWXSHS"
+	secretAccessKey := "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"
+	useSSL := false
+
+	// Initialize minio client object.
+	minioClient, err := minio.New(endpoint, accessKeyID, secretAccessKey, useSSL)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	object, err := minioClient.GetObject("cloudstorage1234" , path + fileName, minio.GetObjectOptions{})
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	file, err = os.Create("../files/" + fileName)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	if _, err = io.Copy(file, object); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	return file, nil
 }

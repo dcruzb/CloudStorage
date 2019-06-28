@@ -9,14 +9,16 @@ import (
 type AwsFunctions struct {
 }
 
-func (AwsFunctions) SendFile(file *os.File) (createdFile cloudLib.CloudFile, err error) {
+func (AwsFunctions) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile, err error) {
 	//panic("implement me")
 	aws := awsLib.Aws{}
-	return aws.SendFile(file)
+	return aws.SendFile(file, path)
 }
 
-func (AwsFunctions) GetFile() (file *os.File, err error) {
-	panic("implement me")
+func (AwsFunctions) GetFile(fileName string, path string) (file *os.File, err error) {
+	//panic("implement me")
+	aws := awsLib.Aws{}
+	return aws.GetFile(fileName, path)
 }
 
 func (AwsFunctions) List(path string) (files []cloudLib.CloudFile, err error) {
