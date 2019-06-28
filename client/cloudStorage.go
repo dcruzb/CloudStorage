@@ -1,26 +1,28 @@
 package main
 
 import (
+	"CloudStorage/cloudLib/aws"
 	"CloudStorage/shared"
-	dist "github.com/dcbCIn/MidCloud/distribution"
+	"fmt"
 	"github.com/dcbCIn/MidCloud/lib"
-	"github.com/dcbCIn/MidCloud/services/common"
+	"os"
 	"time"
 )
 
 func main() {
 	// Todo criar proxy para StorageFunctions
 
-	lp := dist.NewLookupProxy(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT)
-	defer func() { err := lp.Close(); lib.FailOnError(err, "Error at closing lookup") }()
+	aws := aws.AwsFunctions{}
+	//aws.Price(14.0)
 
-	err := lp.Bind("googleCloudFunctions", common.ClientProxy{Ip: shared.AWS_SERVER_IP, Port: shared.AWS_SERVER_PORT, ObjectId: 2000}) // Todo tirar daqui depois, somente para testes
-	lib.FailOnError(err, "Error at lookup.")
+	fileTeste, err := os.Open("C:/Users/CASA/Desktop/mid-cloud.zip");
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer fileTeste.Close()
 
-	cp, err := lp.Lookup("googleCloudFunctions")
-	lib.FailOnError(err, "Error at lookup.")
-
-	lib.PrintlnInfo("CP:", cp, "ip:", cp.Ip, "Port:", cp.Port, "ObjectId:", cp.ObjectId)
+	aws.SendFile(fileTeste, "/cloudstorage/")
 
 	return
 
