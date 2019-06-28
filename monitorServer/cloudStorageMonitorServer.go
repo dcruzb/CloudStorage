@@ -2,31 +2,29 @@ package main
 
 import (
 	"CloudStorage/shared"
-	"github.com/dcbCIn/MidCloud/distribution"
 	"github.com/dcbCIn/MidCloud/lib"
-	"github.com/dcbCIn/MidCloud/services/common"
+	"github.com/dcbCIn/MidCloudMAPEK"
+	"sync"
 )
 
 func main() {
 	lib.PrintlnInfo("Initializing server CloudStorageMonitor")
+	var wg = sync.WaitGroup{}
+	wg.Add(1)
 
-	lp := dist.NewLookupProxy(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT)
-	err := lp.Bind("cloudMonitor", common.ClientProxy{Ip: shared.MONITOR_IP, Port: shared.MONITOR_PORT, ObjectId: 2000})
-	lib.FailOnError(err, "Error at lookup.")
-	//err = lp.Close()
-	//lib.FailOnError(err, "Error at closing lookup")
+	chanAnalyzer := make(chan []MidCloudMAPEK.CloudService)
+	chanPlanner := make(chan MidCloudMAPEK.CloudService)
+	chanExecutor := make(chan MidCloudMAPEK.CloudService)
 
-	// Todo monitor não está fechando a conexão para o lookup, pois é acessado diversas vezes depois (a cada intervalo de tempo pré-definido).
-	//  Isso ocasiona a quebra do sistema de monitoramento caso o servidor de nomes seja reiniciado. Quando for solucionado descomentar close acima
+	monitor := MidCloudMAPEK.Monitor{}
+	go monitor.Start(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT, "CloudFunctions", chanAnalyzer)
 
-	monitor := common.Monitor{}
-	go monitor.Start(lp, "cloudFunctions", "CloudFunctions")
+	go MidCloudMAPEK.Analyze(chanAnalyzer, chanPlanner)
 
-	// escuta na porta tcp configurada
-	inv := dist.InvokerImpl{}
-	inv.Register(2000, &monitor)
-	err = inv.Invoke(shared.MONITOR_PORT)
-	lib.FailOnError(err, "Error calling invoker.")
+	go MidCloudMAPEK.Plan(chanPlanner, chanExecutor)
 
+	go MidCloudMAPEK.Execute(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT, "cloudFunctions", chanExecutor)
+
+	wg.Wait()
 	lib.PrintlnInfo("Fim do Servidor CloudStorageMonitor")
 }
