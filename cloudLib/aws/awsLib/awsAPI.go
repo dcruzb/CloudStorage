@@ -8,6 +8,7 @@ import (
 	"github.com/minio/minio-go"
 	"io/ioutil"
 	"log"
+	"path/filepath"
 
 	"net/http"
 	"os"
@@ -97,20 +98,13 @@ func (Aws) SendFile(file *os.File) (createdFile cloudLib.CloudFile, err error) {
 		log.Printf("Criado com sucesso %s\n", bucketName)
 	}
 
-	fileTeste, err := os.Open("C:/Users/CASA/Desktop/mid-cloud.zip.zip");
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer fileTeste.Close()
-
-	fileStat, err := fileTeste.Stat()
+	fileStat, err := file.Stat()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	n, err := minioClient.PutObject(bucketName, "myobject", fileTeste, fileStat.Size(), minio.PutObjectOptions{ContentType:"application/octet-stream"})
+	n, err := minioClient.PutObject(bucketName, filepath.Base(file.Name()), file, fileStat.Size(), minio.PutObjectOptions{ContentType:"application/octet-stream"})
 	if err != nil {
 		fmt.Println(err)
 		return
