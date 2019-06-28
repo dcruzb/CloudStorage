@@ -3,6 +3,7 @@ package awsLib
 import (
 	"CloudStorage/cloudLib"
 	"encoding/json"
+	"fmt"
 	"github.com/dcbCIn/MidCloud/lib"
 	"github.com/minio/minio-go"
 	"io/ioutil"
@@ -96,21 +97,26 @@ func (Aws) SendFile(file *os.File) (createdFile cloudLib.CloudFile, err error) {
 		log.Printf("Criado com sucesso %s\n", bucketName)
 	}
 
-
-	//file.Name()
-
-	// Upload the zip file
-	objectName := "mid-cloud.zip"
-	filePath := "mid-cloud.zip"
-	contentType := "application/zip"
-
-	// Upload the zip file with FPutObject
-	n, err := minioClient.FPutObject(bucketName, objectName, filePath, minio.PutObjectOptions{ContentType:contentType})
+	fileTeste, err := os.Open("C:/Users/CASA/Desktop/mid-cloud.zip.zip");
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println(err)
+		return
+	}
+	defer fileTeste.Close()
+
+	fileStat, err := fileTeste.Stat()
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
 
-	log.Printf("Successfully uploaded %s of size %d\n", objectName, n)
+	n, err := minioClient.PutObject(bucketName, "myobject", fileTeste, fileStat.Size(), minio.PutObjectOptions{ContentType:"application/octet-stream"})
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("Successfully uploaded bytes: ", n)
 
 	return createdFile, nil
 }
