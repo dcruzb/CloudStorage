@@ -82,8 +82,8 @@ func (Aws) SendFile(file *os.File) (createdFile cloudLib.CloudFile, err error) {
 	log.Printf("%#v\n", minioClient) // minioClient is now setup
 
 	// Make a new bucket called mymusic.
-	bucketName := "porra"
-	location := "us-east-1"
+	bucketName := "cloudstorage1234"
+	location := "sa-east-1"
 
 	err = minioClient.MakeBucket(bucketName, location)
 	if err != nil {
