@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/dcbCIn/MidCloud/lib"
 	"github.com/minio/minio-go"
-	"io"
 	"io/ioutil"
 	"log"
 	"path/filepath"
@@ -83,7 +82,7 @@ func (Aws) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile,
 	log.Printf("%#v\n", minioClient) // minioClient is now setup
 
 	// Make a new bucket called mymusic.
-	bucketName := "cloudstorage1234"
+	bucketName := "ufpestorage"
 	location := "sa-east-1"
 
 	err = minioClient.MakeBucket(bucketName, location)
@@ -128,22 +127,61 @@ func (Aws) GetFile(fileName string, path string) (file *os.File, err error) {
 		log.Fatalln(err)
 	}
 
-	object, err := minioClient.GetObject("cloudstorage1234" , path + fileName, minio.GetObjectOptions{})
+	object, err := minioClient.GetObject("ufpestorage", path + fileName, minio.GetObjectOptions{})
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	file, err = os.Create("../files/" + fileName)
+	file, err = os.Create("C:/temp/" + fileName)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	if _, err = io.Copy(file, object); err != nil {
-		fmt.Println(err)
-		return
-	}
+	fileInfo, _ := object.Stat()
+	buffer := make([]byte, fileInfo.Size)
+	object.Read(buffer)
+
+	file.Write(buffer)
+	fmt.Print(file.Stat())
+	//
+	//if _, err = io.Copy(file, buffer); err != nil {
+	//	fmt.Println(err)
+	//	return
+	//}
 
 	return file, nil
+}
+
+func (Aws) List(path string) (files []cloudLib.CloudFile, err error) {
+
+	endpoint := "s3.amazonaws.com"
+	accessKeyID := "AKIA4HA7C4NR5EBWXSHS"
+	secretAccessKey := "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"
+	useSSL := false
+
+	// Initialize minio client object.
+	minioClient, err := minio.New(endpoint, accessKeyID, secretAccessKey, useSSL)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// Create a done channel to control 'ListObjectsV2' go routine.
+	doneCh := make(chan struct{})
+
+	// Indicate to our routine to exit cleanly upon return.
+	defer close(doneCh)
+
+	isRecursive := true
+	objectCh := minioClient.ListObjectsV2("ufpestorage", "myprefix", isRecursive, doneCh)
+	for object := range objectCh {
+		if object.Err != nil {
+			fmt.Println(object.Err)
+			return
+		}
+		fmt.Println(object)
+	}
+
+	return files, nil
 }
