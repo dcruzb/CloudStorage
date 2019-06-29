@@ -21,7 +21,8 @@ func main() {
 	var inv dist.InvokerImpl
 	inv.Register(2000, &google.GoogleFunctions{})
 
-	err = inv.Invoke(shared.GOOGLE_SERVER_PORT)
+	// TODO alterar para pegar initialConnections da configuração
+	err = inv.Invoke(shared.GOOGLE_SERVER_PORT, 5)
 	lib.FailOnError(err, "Error calling invoker.")
 
 	lib.PrintlnInfo("Fim do Servidor GoogleStorage")
