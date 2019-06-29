@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/dcbCIn/MidCloud/lib"
 	"github.com/minio/minio-go"
-	"io"
 	"io/ioutil"
 	"log"
 	"path/filepath"
@@ -128,22 +127,29 @@ func (Aws) GetFile(fileName string, path string) (file *os.File, err error) {
 		log.Fatalln(err)
 	}
 
-	object, err := minioClient.GetObject("ufpestorage" , path + fileName, minio.GetObjectOptions{})
+	object, err := minioClient.GetObject("ufpestorage", path + fileName, minio.GetObjectOptions{})
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	file, err = os.Create("../files/" + fileName)
+	file, err = os.Create("C:/temp/" + fileName)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	if _, err = io.Copy(file, object); err != nil {
-		fmt.Println(err)
-		return
-	}
+	fileInfo, _ := object.Stat()
+	buffer := make([]byte, fileInfo.Size)
+	object.Read(buffer)
+
+	file.Write(buffer)
+	fmt.Print(file.Stat())
+	//
+	//if _, err = io.Copy(file, buffer); err != nil {
+	//	fmt.Println(err)
+	//	return
+	//}
 
 	return file, nil
 }
