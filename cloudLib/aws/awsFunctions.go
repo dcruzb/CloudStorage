@@ -20,14 +20,13 @@ func (AwsFunctions) GetFile(fileName string, path string) (file *os.File, err er
 }
 
 func (AwsFunctions) List(path string) (files []cloudLib.CloudFile, err error) {
-	panic("implement me")
+	aws := awsLib.Aws{}
+	return aws.List(path)
 }
 
 func (AwsFunctions) Price(size float64) (price float64, err error) {
 	// Todo usar cache dos dados
 	// Todo criar função para preencher o cache
-	// Todo obter arquivo data.json diretamente da AWS
-
 	aws := awsLib.Aws{}
 
 	return aws.Price(size), nil
