@@ -2,8 +2,10 @@ package googleAPI
 
 import (
 	"CloudStorage/cloudLib"
+	"CloudStorage/shared"
 	"cloud.google.com/go/storage"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -53,7 +55,7 @@ func (Google) Price(size float64) (price float64, err error) {
 
 	//jsonFile, err := os.Open("data.json")
 
-	url := "https://cloudbilling.googleapis.com/v1/services/95FF-2EF5-5EA1/skus?key=Key_Code"
+	url := "https://cloudbilling.googleapis.com/v1/services/95FF-2EF5-5EA1/skus?key=" + shared.GOOGLE_KEY_CODE
 
 	response, erro := http.Get(url)
 
@@ -95,13 +97,33 @@ func (Google) Availability() (available bool, err error) {
 	return true, nil
 }
 
-func (Google) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile, err error) {
+func (Google) SendFile(base64File string, fileName string, remotePath string) (createdFile cloudLib.CloudFile, err error) {
+
+	dec, err := base64.StdEncoding.DecodeString(base64File)
+	if err != nil {
+		panic(err)
+	}
+
+	file, err := os.Create(fileName)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	if _, err := file.Write(dec); err != nil {
+		panic(err)
+	}
+	if err := file.Sync(); err != nil {
+		panic(err)
+	}
 
 	ctx := context.Background()
 	//projectID := "gifted-vigil-245219"
 
 	// este arquivo autentica aplicação no serviço do storage da google cloud storage
-	client, err1 := storage.NewClient(ctx, option.WithCredentialsFile("C:/Users/CASA/go/src/CloudStorage/cloudLib/google/googleAPI/My First Project-41269a52f4a2.json"))
+	absPath, _ := filepath.Abs("./cloudLib/google/googleAPI/My First Project-41269a52f4a2.json")
+	fmt.Println(absPath)
+	client, err1 := storage.NewClient(ctx, option.WithCredentialsFile(absPath)) //"./CloudStorage/cloudLib/google/googleAPI/My First Project-41269a52f4a2.json"))
 	if err1 != nil {
 		log.Fatalln(err1)
 	}
@@ -121,7 +143,7 @@ func (Google) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFi
 	}
 	fmt.Printf("bucket %s, created at %s, is located in %s with storage class %s\n", attrs.Name, attrs.Created, attrs.Location, attrs.StorageClass)
 
-	obj := bkt.Object(path + filepath.Base(file.Name()))
+	obj := bkt.Object(remotePath + filepath.Base(file.Name()))
 
 	w := obj.NewWriter(ctx)
 
@@ -142,7 +164,7 @@ func (Google) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFi
 
 	createdFile.Id = file.Name()
 	createdFile.Cloud = "Google Cloud Platform"
-	createdFile.Path = path + filepath.Base(file.Name())
+	createdFile.Path = remotePath + filepath.Base(file.Name())
 	createdFile.Size = strconv.FormatInt(fileStat.Size(), 10)
 	createdFile.Created = time.Now()
 	createdFile.LastChecked = time.Now()
@@ -204,7 +226,7 @@ func (Google) List(path string) (files []cloudLib.CloudFile, err error) {
 
 	i := 0
 	filesT := [1000]cloudLib.CloudFile{}
-	for  {
+	for {
 		attrs, err2 := it.Next()
 		if err2 == iterator.Done {
 			break

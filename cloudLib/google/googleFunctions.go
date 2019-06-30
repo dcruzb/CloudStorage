@@ -9,9 +9,9 @@ import (
 type GoogleFunctions struct {
 }
 
-func (gf GoogleFunctions) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile, err error) {
+func (gf GoogleFunctions) SendFile(base64File string, fileName string, path string) (createdFile cloudLib.CloudFile, err error) {
 	google := googleAPI.Google{}
-	return google.SendFile(file, path)
+	return google.SendFile(base64File, fileName, path)
 }
 
 func (gf GoogleFunctions) GetFile(fileName string, path string) (file *os.File, err error) {
