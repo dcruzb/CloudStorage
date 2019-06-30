@@ -73,8 +73,8 @@ func (Aws) Availability() (available bool, err error) {
 func (Aws) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile, err error) {
 
 	endpoint := "s3.amazonaws.com"
-	accessKeyID := "AKIA4HA7C4NR5EBWXSHS"
-	secretAccessKey := "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"
+	accessKeyID := ""
+	secretAccessKey := ""
 	useSSL := false
 
 	// Initialize minio client object.
@@ -168,8 +168,8 @@ func (Aws) GetFile(fileName string, path string) (file *os.File, err error) {
 func (Aws) List(path string) (files []cloudLib.CloudFile, err error) {
 
 	endpoint := "s3.amazonaws.com"
-	accessKeyID := "AKIA4HA7C4NR5EBWXSHS"
-	secretAccessKey := "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"
+	accessKeyID := ""
+	secretAccessKey := ""
 	useSSL := false
 
 	// Initialize minio client object.
