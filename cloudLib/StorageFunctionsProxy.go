@@ -4,6 +4,7 @@ import (
 	dist "github.com/dcbCIn/MidCloud/distribution"
 	"github.com/dcbCIn/MidCloud/lib"
 	"os"
+	"reflect"
 )
 
 type StorageFunctionsProxy struct {
@@ -56,7 +57,10 @@ func (sfp StorageFunctionsProxy) SendFile(base64File string, fileName string, pa
 		return createdFile, err
 	}
 
-	createdFile = termination.Result.([]interface{})[0].(CloudFile)
+	createdFileValue := reflect.New(reflect.ValueOf(createdFile).Type())
+	_, err = lib.Decode(termination.Result.([]interface{})[0].(map[string]interface{}), &createdFileValue)
+	createdFile = createdFileValue.Elem().Interface().(CloudFile)
+
 	//err = termination.Result.([]interface{})[1].(error)
 	if err != nil {
 		return createdFile, err

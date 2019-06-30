@@ -15,7 +15,7 @@ type CloudFile struct {
 	Id          string
 	Path        string
 	Cloud       string
-	Size        string
+	Size        string // Size in mb
 	Created     time.Time
 	LastChecked time.Time
 }
