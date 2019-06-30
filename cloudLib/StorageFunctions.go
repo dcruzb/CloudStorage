@@ -6,7 +6,7 @@ import (
 )
 
 type StorageFunctions interface {
-	SendFile(file *os.File, path string) (createdFile CloudFile, err error)
+	SendFile(base64File string, fileName string, remotePath string) (createdFile CloudFile, err error)
 	GetFile(fileName string, path string) (file *os.File, err error)
 	List(path string) (files []CloudFile, err error)
 }
