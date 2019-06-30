@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"path/filepath"
+	"time"
 
 	"net/http"
 	"os"
@@ -116,6 +117,13 @@ func (Aws) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile,
 	}
 
 	fmt.Println("Successfully uploaded bytes: ", n)
+
+	createdFile.Id = file.Name()
+	createdFile.Cloud = "AWS"
+	createdFile.Path = path + filepath.Base(file.Name())
+	createdFile.Size = strconv.FormatInt(fileStat.Size(), 10)
+	createdFile.Created = time.Now()
+	createdFile.LastChecked = time.Now()
 
 	return createdFile, nil
 }
