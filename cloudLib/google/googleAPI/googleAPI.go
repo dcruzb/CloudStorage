@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dcbCIn/MidCloud/lib"
+	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 	"io/ioutil"
 	"log"
@@ -52,7 +53,7 @@ func (Google) Price(size float64) (price float64, err error) {
 
 	//jsonFile, err := os.Open("data.json")
 
-	url := "https://cloudbilling.googleapis.com/v1/services/95FF-2EF5-5EA1/skus?key=Key_Code"
+	url := "https://cloudbilling.googleapis.com/v1/services/95FF-2EF5-5EA1/skus?key=AIzaSyAt68l7L3VqujOtsTcwbY7AT6HIlyLQ5G4"
 
 	response, erro := http.Get(url)
 
@@ -97,6 +98,7 @@ func (Google) Availability() (available bool, err error) {
 func (Google) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile, err error) {
 
 	ctx := context.Background()
+	//projectID := "gifted-vigil-245219"
 
 	// este arquivo autentica aplicação no serviço do storage da google cloud storage
 	client, err1 := storage.NewClient(ctx, option.WithCredentialsFile("C:/Users/CASA/go/src/CloudStorage/cloudLib/google/googleAPI/My First Project-41269a52f4a2.json"))
@@ -187,6 +189,40 @@ func (Google) GetFile(fileName string, path string) (file *os.File, err error) {
 }
 
 func (Google) List(path string) (files []cloudLib.CloudFile, err error) {
+
+	ctx := context.Background()
+
+	// este arquivo autentica aplicação no serviço do storage da google cloud storage
+	client, err1 := storage.NewClient(ctx, option.WithCredentialsFile("C:/Users/CASA/go/src/CloudStorage/cloudLib/google/googleAPI/My First Project-41269a52f4a2.json"))
+	if err1 != nil {
+		log.Fatalln(err1)
+	}
+
+	bucketName := "midd_cloud"
+
+	it := client.Bucket(bucketName).Objects(ctx, nil)
+
+	i := 0
+	filesT := [1000]cloudLib.CloudFile{}
+	for  {
+		attrs, err2 := it.Next()
+		if err2 == iterator.Done {
+			break
+		}
+		if err2 != nil {
+			log.Fatalln(err2)
+		}
+
+		filesT[i].Id = filepath.Base(attrs.Name)
+		filesT[i].Cloud = "Google Cloud Platform"
+		filesT[i].Path = path + filepath.Base(attrs.Name)
+		filesT[i].Size = strconv.FormatInt(attrs.Size, 10)
+		filesT[i].Created = attrs.Created
+		filesT[i].LastChecked = attrs.Created
+		i++
+	}
+
+	fmt.Print(filesT[0].Id)
 
 	return files, nil
 }
