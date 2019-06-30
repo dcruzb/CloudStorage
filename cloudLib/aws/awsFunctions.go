@@ -29,9 +29,11 @@ func (AwsFunctions) Price(size float64) (price float64, err error) {
 	// Todo criar função para preencher o cache
 	aws := awsLib.Aws{}
 
-	return aws.Price(size), nil
+	return aws.Price(size)
 }
 
 func (AwsFunctions) Availability() (available bool, err error) {
-	return true, nil
+	aws := awsLib.Aws{}
+
+	return aws.Availability()
 }
