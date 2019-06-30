@@ -2,6 +2,7 @@ package main
 
 import (
 	"CloudStorage/cloudLib/aws"
+	"CloudStorage/cloudLib/google"
 	"CloudStorage/shared"
 	"fmt"
 	"github.com/dcbCIn/MidCloud/lib"
@@ -25,6 +26,16 @@ func main() {
 	aws.SendFile(fileTeste, "cloudstorage/")
 
 	return
+
+	google := google.GoogleFunctions{}
+	fileGoogle, err2 := os.Open("C:/Users/CASA/Desktop/mid-cloud.zip");
+	if err2 != nil {
+		fmt.Println(err2)
+		return
+	}
+	defer fileGoogle.Close()
+
+	google.SendFile(fileGoogle, "cloudstorage/")
 
 	//var jp dist.JankenpoProxy
 	// connect to server
