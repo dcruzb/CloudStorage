@@ -202,8 +202,8 @@ func (Google) SendFile(base64File string, fileName string, remotePath string) (c
 	createdFile.Id = fileName
 	createdFile.Cloud = "Google Cloud Platform"
 	createdFile.Path = remotePath + fileName
-	size := (float64)(len(decFile) / 1024 / 1024 / 1024)
-	createdFile.Size = fmt.Sprintf("%f", size) //strconv.FormatInt( fileInfo.Size(), 10)
+	size := (float64)(len(decFile)) / 1024 / 1024 // Convert to mb
+	createdFile.Size = fmt.Sprintf("%f", size)    //strconv.FormatInt( fileInfo.Size(), 10)
 	createdFile.Created = time.Now()
 	createdFile.LastChecked = time.Now()
 
