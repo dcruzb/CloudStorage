@@ -8,13 +8,11 @@ import (
 	"github.com/minio/minio-go"
 	"io/ioutil"
 	"log"
-	"path/filepath"
-	"time"
-
 	"net/http"
 	"os"
-
+	"path/filepath"
 	"strconv"
+	"time"
 )
 
 type JsonAWS struct {
