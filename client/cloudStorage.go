@@ -50,15 +50,14 @@ func main() {
 
 	var sp cloudLib.StorageFunctionsProxy
 	sp = *cloudLib.NewStorageFunctionsProxy(cp.Ip, cp.Port, cp.ObjectId)
+	defer sp.Close()
 
-	fileTeste, err := os.Open("C:/Users/dcruz/OneDrive/Documents/Mestrado/Download artigos para Fagner/p426-hilton.pdf") //preview.jpg") //
+	fileTeste, err := os.Open("C:/Users/dcruz/OneDrive/Documents/Mestrado/Download artigos para Fagner/preview.mini.jpg") //p426-hilton.pdf") //
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	defer fileTeste.Close()
-
-	//aws.SendFile(fileTeste, "cloudstorage/")
 
 	// Read entire JPG into byte slice.
 	reader := bufio.NewReader(fileTeste)
@@ -67,15 +66,10 @@ func main() {
 	// Encode as base64.
 	encoded := base64.StdEncoding.EncodeToString(content)
 
-	// Print encoded data to console.
-	// ... The base64 image can be used as a data URI in a browser.
-	fmt.Println("ENCODED: " + encoded)
-
 	cloudfile, err := sp.SendFile(encoded, filepath.Base(fileTeste.Name()), "cloudstorage/")
-	lib.PrintlnInfo("File sent successfully. Cloud Sent:" + cloudfile.Cloud)
+	lib.FailOnError(err, "Error sending file.")
 
-	err = sp.Close()
-	lib.FailOnError(err, "Error at closing lookup")
+	lib.PrintlnInfo("File sent successfully. File:", cloudfile.Id, "Cloud:", cloudfile.Cloud)
 
 	lib.PrintlnInfo("Fim do client CloudStorage")
 }
