@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/api/option"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -89,7 +90,40 @@ func (Google) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFi
 
 func (Google) GetFile(fileName string, path string) (file *os.File, err error) {
 
-	return file, nil
+	ctx := context.Background()
+
+	// este arquivo autentica aplicação no serviço do storage da google cloud storage
+	client, err1 := storage.NewClient(ctx, option.WithCredentialsFile("C:/Users/CASA/go/src/CloudStorage/cloudLib/google/googleAPI/My First Project-41269a52f4a2.json"))
+	if err1 != nil {
+		log.Fatalln(err1)
+	}
+
+	bucketName := "midd_cloud"
+
+	rc, err2 := client.Bucket(bucketName).Object(path + fileName).NewReader(ctx)
+	if err2 != nil {
+		log.Fatalln(err2)
+	}
+
+	fmt.Print(rc)
+
+	defer rc.Close()
+
+	data, err3 := ioutil.ReadAll(rc)
+	if err3 != nil {
+		log.Fatalln(err3)
+	}
+
+	file, err = os.Create("C:/temp/" + fileName)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	file.Write(data)
+	fmt.Print(file.Stat())
+
+	return file, err
 }
 
 func (Google) List(path string) (files []cloudLib.CloudFile, err error) {
