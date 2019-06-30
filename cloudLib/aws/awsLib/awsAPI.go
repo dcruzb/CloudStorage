@@ -8,13 +8,11 @@ import (
 	"github.com/minio/minio-go"
 	"io/ioutil"
 	"log"
-	"path/filepath"
-	"time"
-
 	"net/http"
 	"os"
-
+	"path/filepath"
 	"strconv"
+	"time"
 )
 
 type JsonAWS struct {
@@ -36,7 +34,7 @@ type Region struct {
 type Aws struct {
 }
 
-func (Aws) Price(size float64) float64 {
+func (Aws) Price(size float64) (price float64, err error) {
 	//jsonFile, err := os.Open("data.json")
 
 	url := "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/s3/USD/current/s3.json"
@@ -62,9 +60,14 @@ func (Aws) Price(size float64) float64 {
 
 	floatvalue, _ := strconv.ParseFloat(aws.Nuvem.Regions.Br_sp.Price, 64)
 
-	price := size * floatvalue
+	price = size * floatvalue
 
-	return price
+	return price, nil
+}
+
+func (Aws) Availability() (available bool, err error) {
+	// TODO implement Aws Availability
+	return true, nil
 }
 
 func (Aws) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile, err error) {
@@ -105,7 +108,7 @@ func (Aws) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile,
 		return
 	}
 
-	n, err := minioClient.PutObject(bucketName, path + filepath.Base(file.Name()), file, fileStat.Size(), minio.PutObjectOptions{ContentType:"application/octet-stream"})
+	n, err := minioClient.PutObject(bucketName, path+filepath.Base(file.Name()), file, fileStat.Size(), minio.PutObjectOptions{ContentType: "application/octet-stream"})
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -135,13 +138,13 @@ func (Aws) GetFile(fileName string, path string) (file *os.File, err error) {
 		log.Fatalln(err)
 	}
 
-	object, err := minioClient.GetObject("ufpestorage", path + fileName, minio.GetObjectOptions{})
+	object, err := minioClient.GetObject("ufpestorage", path+fileName, minio.GetObjectOptions{})
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	file, err = os.Create("C:/temp/" + fileName)
+	file, err = os.Create("./files/" + fileName)
 	if err != nil {
 		fmt.Println(err)
 		return
