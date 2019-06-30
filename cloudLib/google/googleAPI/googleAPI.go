@@ -9,6 +9,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
+	"time"
 )
 
 type JsonGoogleCloud struct {
@@ -68,6 +70,19 @@ func (Google) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFi
 	if err4 := w.Close(); err != nil {
 		log.Fatalln(err4)
 	}
+
+	fileStat, err := file.Stat()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	createdFile.Id = file.Name()
+	createdFile.Cloud = "Google Cloud Platform"
+	createdFile.Path = path + filepath.Base(file.Name())
+	createdFile.Size = strconv.FormatInt(fileStat.Size(), 10)
+	createdFile.Created = time.Now()
+	createdFile.LastChecked = time.Now()
 
 	return createdFile, nil
 }
