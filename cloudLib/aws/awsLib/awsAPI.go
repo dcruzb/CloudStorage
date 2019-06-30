@@ -3,6 +3,7 @@ package awsLib
 import (
 	"CloudStorage/cloudLib"
 	"CloudStorage/shared"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/dcbCIn/MidCloud/lib"
@@ -11,7 +12,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 	"time"
 )
@@ -71,7 +71,7 @@ func (Aws) Availability() (available bool, err error) {
 	return true, nil
 }
 
-func (Aws) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile, err error) {
+func (Aws) SendFile(base64File string, fileName string, remotePath string) (createdFile cloudLib.CloudFile, err error) {
 
 	endpoint := "s3.amazonaws.com"
 	accessKeyID := shared.AWS_ACCESS_KEY_ID
@@ -81,7 +81,7 @@ func (Aws) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile,
 	// Initialize minio client object.
 	minioClient, err := minio.New(endpoint, accessKeyID, secretAccessKey, useSSL)
 	if err != nil {
-		log.Fatalln(err)
+		panic(err)
 	}
 
 	log.Printf("%#v\n", minioClient) // minioClient is now setup
@@ -97,30 +97,44 @@ func (Aws) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile,
 		if err == nil && exists {
 			log.Printf("Já existe %s\n", bucketName)
 		} else {
-			log.Fatalln(err)
+			panic(err)
 		}
 	} else {
 		log.Printf("Criado com sucesso %s\n", bucketName)
 	}
 
-	fileStat, err := file.Stat()
+	decFile, err := base64.StdEncoding.DecodeString(base64File)
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err)
 	}
 
-	n, err := minioClient.PutObject(bucketName, path+filepath.Base(file.Name()), file, fileStat.Size(), minio.PutObjectOptions{ContentType: "application/octet-stream"})
+	file, err := os.Create("C:/temp/" + fileName)
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err)
+	}
+
+	defer file.Close()
+
+	file.Write(decFile)
+	fmt.Print(file)
+
+	fileStat, err := file.Stat()
+	if err != nil {
+		panic(err)
+	}
+
+	n, err := minioClient.PutObject(bucketName, remotePath + fileName, file, fileStat.Size(), minio.PutObjectOptions{ContentType: "application/octet-stream"})
+	if err != nil {
+		panic(err)
 	}
 
 	fmt.Println("Successfully uploaded bytes: ", n)
 
-	createdFile.Id = file.Name()
+	createdFile.Id = fileName
 	createdFile.Cloud = "AWS"
-	createdFile.Path = path + filepath.Base(file.Name())
-	createdFile.Size = strconv.FormatInt(fileStat.Size(), 10)
+	createdFile.Path = remotePath + fileName
+	size := (float64)(len(decFile)) / 1024 / 1024 // Convert to mb
+	createdFile.Size = fmt.Sprintf("%f", size)    //strconv.FormatInt( fileInfo.Size(), 10)
 	createdFile.Created = time.Now()
 	createdFile.LastChecked = time.Now()
 

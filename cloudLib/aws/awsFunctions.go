@@ -9,9 +9,9 @@ import (
 type AwsFunctions struct {
 }
 
-func (AwsFunctions) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile, err error) {
+func (AwsFunctions) SendFile(base64File string, fileName string, path string) (createdFile cloudLib.CloudFile, err error) {
 	aws := awsLib.Aws{}
-	return aws.SendFile(file, path)
+	return aws.SendFile(base64File, fileName, path)
 }
 
 func (AwsFunctions) GetFile(fileName string, path string) (file *os.File, err error) {
