@@ -128,8 +128,8 @@ func (Aws) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile,
 
 func (Aws) GetFile(fileName string, path string) (file *os.File, err error) {
 	endpoint := "s3.amazonaws.com"
-	accessKeyID := "AKIA4HA7C4NR5EBWXSHS"
-	secretAccessKey := "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"
+	accessKeyID := ""
+	secretAccessKey := ""
 	useSSL := false
 
 	// Initialize minio client object.
