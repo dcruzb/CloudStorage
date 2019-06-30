@@ -51,7 +51,7 @@ func main() {
 	var sp cloudLib.StorageFunctionsProxy
 	sp = *cloudLib.NewStorageFunctionsProxy(cp.Ip, cp.Port, cp.ObjectId)
 
-	fileTeste, err := os.Open("C:/Users/dcruz/OneDrive/Documents/Mestrado/Download artigos para Fagner/p426-hilton.pdf")
+	fileTeste, err := os.Open("C:/Users/dcruz/OneDrive/Documents/Mestrado/Download artigos para Fagner/p426-hilton.pdf") //preview.jpg") //
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -72,8 +72,10 @@ func main() {
 	fmt.Println("ENCODED: " + encoded)
 
 	cloudfile, err := sp.SendFile(encoded, filepath.Base(fileTeste.Name()), "cloudstorage/")
-
 	lib.PrintlnInfo("File sent successfully. Cloud Sent:" + cloudfile.Cloud)
+
+	err = sp.Close()
+	lib.FailOnError(err, "Error at closing lookup")
 
 	lib.PrintlnInfo("Fim do client CloudStorage")
 }

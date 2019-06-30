@@ -99,7 +99,7 @@ func (Google) Availability() (available bool, err error) {
 
 func (Google) SendFile(base64File string, fileName string, remotePath string) (createdFile cloudLib.CloudFile, err error) {
 
-	dec, err := base64.StdEncoding.DecodeString(base64File)
+	/*dec, err := base64.StdEncoding.DecodeString(base64File)
 	if err != nil {
 		panic(err)
 	}
@@ -112,10 +112,10 @@ func (Google) SendFile(base64File string, fileName string, remotePath string) (c
 
 	if _, err := file.Write(dec); err != nil {
 		panic(err)
-	}
-	if err := file.Sync(); err != nil {
+	}*/
+	/*if err := file.Sync(); err != nil {
 		panic(err)
-	}
+	}*/
 
 	ctx := context.Background()
 	//projectID := "gifted-vigil-245219"
@@ -143,31 +143,71 @@ func (Google) SendFile(base64File string, fileName string, remotePath string) (c
 	}
 	fmt.Printf("bucket %s, created at %s, is located in %s with storage class %s\n", attrs.Name, attrs.Created, attrs.Location, attrs.StorageClass)
 
-	obj := bkt.Object(remotePath + filepath.Base(file.Name()))
+	obj := bkt.Object(remotePath + fileName)
 
 	w := obj.NewWriter(ctx)
+	//	objAttrs, _ := obj.Attrs(ctx)
+	//	objAttrs.ContentType = "image/jpg"
+	//obj.Update(ctx, attr)
+	//objAttrs := storage.ObjectAttrsToUpdate{ContentType: "image/jpg"}
+	//obj.Attrs := objAttrs
+	//obj.Update(ctx, objAttrs)
 
-	fileInfo, _ := file.Stat()
-	buffer := make([]byte, fileInfo.Size())
+	/*_, err = io.Copy(w, file)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	err = w.Close()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}*/
 
-	w.Write(buffer)
+	//	buffer := make([]byte, 1024)//fileInfo.Size())
+
+	decFile, err := base64.StdEncoding.DecodeString(base64File)
+	if err != nil {
+		panic(err)
+	}
+
+	w.Write(decFile)
+
+	/*for {
+		n, err := file.Read(buffer)
+		if err != nil && err != io.EOF {
+			fmt.Println(err)
+			return createdFile, err
+		}
+		if n == 0 {
+			break
+		}
+
+		if _, err := w.Write(buffer[:n]); err != nil {
+			fmt.Println(err)
+			return createdFile, err
+		}
+	}*/
 
 	if err4 := w.Close(); err != nil {
 		log.Fatalln(err4)
 	}
 
-	fileStat, err := file.Stat()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	//fileInfo, _ := decFile.Stat()
+	//if err != nil {
+	//	fmt.Println(err)
+	//	return
+	//}
 
-	createdFile.Id = file.Name()
+	createdFile.Id = fileName
 	createdFile.Cloud = "Google Cloud Platform"
-	createdFile.Path = remotePath + filepath.Base(file.Name())
-	createdFile.Size = strconv.FormatInt(fileStat.Size(), 10)
+	createdFile.Path = remotePath + fileName
+	size := (float64)(len(decFile) / 1024 / 1024 / 1024)
+	createdFile.Size = fmt.Sprintf("%f", size) //strconv.FormatInt( fileInfo.Size(), 10)
 	createdFile.Created = time.Now()
 	createdFile.LastChecked = time.Now()
+
+	fmt.Println("CreatedFile", createdFile)
 
 	return createdFile, nil
 }
