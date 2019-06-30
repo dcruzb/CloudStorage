@@ -29,9 +29,11 @@ func (gf GoogleFunctions) Price(size float64) (price float64, err error) {
 	// Todo criar função para preencher o cache
 	google := googleAPI.Google{}
 
-	return google.Price(size), nil
+	return google.Price(size)
 }
 
 func (gf GoogleFunctions) Availability() (available bool, err error) {
-	return true, nil
+	google := googleAPI.Google{}
+
+	return google.Availability()
 }
