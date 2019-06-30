@@ -52,7 +52,7 @@ func (Google) Price(size float64) (price float64, err error) {
 
 	//jsonFile, err := os.Open("data.json")
 
-	url := "https://cloudbilling.googleapis.com/v1/services/95FF-2EF5-5EA1/skus?key=AIzaSyAt68l7L3VqujOtsTcwbY7AT6HIlyLQ5G4"
+	url := "https://cloudbilling.googleapis.com/v1/services/95FF-2EF5-5EA1/skus?key=Key_Code"
 
 	response, erro := http.Get(url)
 
@@ -97,7 +97,6 @@ func (Google) Availability() (available bool, err error) {
 func (Google) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile, err error) {
 
 	ctx := context.Background()
-	//projectID := "gifted-vigil-245219"
 
 	// este arquivo autentica aplicação no serviço do storage da google cloud storage
 	client, err1 := storage.NewClient(ctx, option.WithCredentialsFile("C:/Users/CASA/go/src/CloudStorage/cloudLib/google/googleAPI/My First Project-41269a52f4a2.json"))
