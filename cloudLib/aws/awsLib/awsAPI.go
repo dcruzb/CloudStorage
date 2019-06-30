@@ -2,6 +2,7 @@ package awsLib
 
 import (
 	"CloudStorage/cloudLib"
+	"CloudStorage/shared"
 	"encoding/json"
 	"fmt"
 	"github.com/dcbCIn/MidCloud/lib"
@@ -73,8 +74,8 @@ func (Aws) Availability() (available bool, err error) {
 func (Aws) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile, err error) {
 
 	endpoint := "s3.amazonaws.com"
-	accessKeyID := ""
-	secretAccessKey := ""
+	accessKeyID := shared.AWS_ACCESS_KEY_ID
+	secretAccessKey := shared.AWS_SECRET_ACCESS_KEY
 	useSSL := false
 
 	// Initialize minio client object.
@@ -128,8 +129,8 @@ func (Aws) SendFile(file *os.File, path string) (createdFile cloudLib.CloudFile,
 
 func (Aws) GetFile(fileName string, path string) (file *os.File, err error) {
 	endpoint := "s3.amazonaws.com"
-	accessKeyID := ""
-	secretAccessKey := ""
+	accessKeyID := shared.AWS_ACCESS_KEY_ID
+	secretAccessKey := shared.AWS_SECRET_ACCESS_KEY
 	useSSL := false
 
 	// Initialize minio client object.
@@ -168,8 +169,8 @@ func (Aws) GetFile(fileName string, path string) (file *os.File, err error) {
 func (Aws) List(path string) (files []cloudLib.CloudFile, err error) {
 
 	endpoint := "s3.amazonaws.com"
-	accessKeyID := ""
-	secretAccessKey := ""
+	accessKeyID := shared.AWS_ACCESS_KEY_ID
+	secretAccessKey := shared.AWS_SECRET_ACCESS_KEY
 	useSSL := false
 
 	// Initialize minio client object.

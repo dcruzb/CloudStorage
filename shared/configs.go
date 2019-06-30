@@ -11,3 +11,6 @@ const GOOGLE_SERVER_PORT = 60000
 const CONECTIONS = 1
 const SAMPLE_SIZE = 10
 const WAIT = 5
+
+const AWS_ACCESS_KEY_ID = "___"
+const AWS_SECRET_ACCESS_KEY = "___"
