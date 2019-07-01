@@ -3,7 +3,6 @@ package aws
 import (
 	"CloudStorage/cloudLib"
 	"CloudStorage/cloudLib/aws/awsLib"
-	"os"
 )
 
 type AwsFunctions struct {
@@ -14,7 +13,7 @@ func (AwsFunctions) SendFile(base64File string, fileName string, path string) (c
 	return aws.SendFile(base64File, fileName, path)
 }
 
-func (AwsFunctions) GetFile(fileName string, path string) (file *os.File, err error) {
+func (AwsFunctions) GetFile(fileName string, path string) (base64File string, err error) {
 	aws := awsLib.Aws{}
 	return aws.GetFile(fileName, path)
 }

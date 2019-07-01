@@ -3,6 +3,7 @@ package awsLib
 import (
 	"CloudStorage/cloudLib"
 	"CloudStorage/shared"
+	"bufio"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -159,7 +160,7 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 	return createdFile, nil
 }
 
-func (Aws) GetFile(fileName string, path string) (file *os.File, err error) {
+func (Aws) GetFile(fileName string, path string) (base64File string, err error) {
 	endpoint := "s3.amazonaws.com"
 	accessKeyID := shared.AWS_ACCESS_KEY_ID
 	secretAccessKey := shared.AWS_SECRET_ACCESS_KEY
@@ -177,20 +178,40 @@ func (Aws) GetFile(fileName string, path string) (file *os.File, err error) {
 		return
 	}
 
-	file, err = os.Create("./files/" + fileName)
-	if err != nil {
-		fmt.Println(err)
-		return
+	file, err2 := os.Create("./cloudLib/aws/awsLib/temp/" + fileName)
+	if err2 != nil {
+		fmt.Println(err2)
 	}
+
+	defer file.Close()
 
 	fileInfo, _ := object.Stat()
 	buffer := make([]byte, fileInfo.Size)
 	object.Read(buffer)
 
 	file.Write(buffer)
-	fmt.Print(file.Stat())
 
-	return file, nil
+	fileTeste, err := os.Open("./cloudLib/aws/awsLib/temp/" + fileName);
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	defer fileTeste.Close()
+
+	reader := bufio.NewReader(fileTeste)
+	content, _ := ioutil.ReadAll(reader)
+
+	// Encode as base64.
+	base64File = base64.StdEncoding.EncodeToString([]byte(content))
+
+	// remover arquivo da pasta temp
+	//err2 := os.Remove("./cloudLib/aws/awsLib/temp/" + filepath.Base(fileTeste.Name()))
+	//if err2 != nil {
+	//	fmt.Println(err2.Error())
+	//}
+
+	return base64File, nil
 }
 
 func (Aws) List(path string) (files []cloudLib.CloudFile, err error) {
