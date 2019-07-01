@@ -241,7 +241,7 @@ func (Google) GetFile(fileName string, path string) (base64File string, err erro
 		log.Fatalln(err3)
 	}
 
-	file, err2 := os.Create("./cloudLib/google/googleAPI/temp/" + fileName)
+	file, err2 := os.Create("./temp/" + fileName)
 	if err2 != nil {
 		fmt.Println(err2)
 		return
