@@ -110,7 +110,7 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 		panic(err)
 	}
 
-	file, err := os.Create("./cloudLib/aws/awsLib/temp/" + fileName)
+	file, err := os.Create("./temp/" + fileName)
 	if err != nil {
 		lib.PrintlnError(err)
 		return createdFile, *shared.NewRemoteError(err.Error())
@@ -133,7 +133,7 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 		return createdFile, *shared.NewRemoteError(err.Error())
 	}
 
-	fileTeste, err := os.Open("./cloudLib/aws/awsLib/temp/" + fileName)
+	fileTeste, err := os.Open("./temp/" + fileName)
 	if err != nil {
 		lib.PrintlnError(err)
 		return createdFile, *shared.NewRemoteError(err.Error())
@@ -184,7 +184,7 @@ func (Aws) GetFile(fileName string, path string) (base64File string, err error) 
 		return
 	}
 
-	file, err2 := os.Create("./cloudLib/aws/awsLib/temp/" + fileName)
+	file, err2 := os.Create("./temp/" + fileName)
 	if err2 != nil {
 		fmt.Println(err2)
 	}
@@ -197,7 +197,7 @@ func (Aws) GetFile(fileName string, path string) (base64File string, err error) 
 
 	file.Write(buffer)
 
-	fileTeste, err := os.Open("./cloudLib/aws/awsLib/temp/" + fileName)
+	fileTeste, err := os.Open("./temp/" + fileName)
 	if err != nil {
 		fmt.Println(err)
 		return
