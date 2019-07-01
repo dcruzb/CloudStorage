@@ -12,7 +12,7 @@ func main() {
 	lib.PrintlnInfo("Initializing server GoogleStorage")
 
 	lp := dist.NewLookupProxy(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT)
-	err := lp.Bind("GoogleCloudFunctions", common.ClientProxy{Ip: shared.GOOGLE_SERVER_IP, Port: shared.GOOGLE_SERVER_PORT, ObjectId: 2000})
+	err := lp.Bind("googleCloudFunctions", common.ClientProxy{Ip: shared.GOOGLE_SERVER_IP, Port: shared.GOOGLE_SERVER_PORT, ObjectId: 2000})
 	lib.FailOnError(err, "Error at lookup.")
 	err = lp.Close()
 	lib.FailOnError(err, "Error at closing lookup")
