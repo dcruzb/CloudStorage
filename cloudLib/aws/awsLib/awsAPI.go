@@ -111,34 +111,33 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 
 	file, err := os.Create("./cloudLib/aws/awsLib/temp/" + fileName)
 	if err != nil {
-		panic(err)
+		return createdFile, err
 	}
 
 	defer file.Close()
 
 	if _, err := file.Write(decFile); err != nil {
-		panic(err)
+		return createdFile, err
 	}
 	if err := file.Sync(); err != nil {
-		panic(err)
+		return createdFile, err
 	}
 
 	fileStat, err := file.Stat()
 	if err != nil {
-		panic(err)
+		return createdFile, err
 	}
 
-	fileTeste, err := os.Open("./cloudLib/aws/awsLib/temp/" + fileName);
+	fileTeste, err := os.Open("./cloudLib/aws/awsLib/temp/" + fileName)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return createdFile, err
 	}
 
 	defer fileTeste.Close()
 
-	n, err := minioClient.PutObject(bucketName, remotePath + fileName, fileTeste, fileStat.Size(), minio.PutObjectOptions{ContentType: "application/zip"})
+	n, err := minioClient.PutObject(bucketName, remotePath+fileName, fileTeste, fileStat.Size(), minio.PutObjectOptions{ContentType: "application/octet-stream"})
 	if err != nil {
-		panic(err)
+		return createdFile, err
 	}
 
 	fmt.Println("Successfully uploaded bytes: ", n)
@@ -191,7 +190,7 @@ func (Aws) GetFile(fileName string, path string) (base64File string, err error) 
 
 	file.Write(buffer)
 
-	fileTeste, err := os.Open("./cloudLib/aws/awsLib/temp/" + fileName);
+	fileTeste, err := os.Open("./cloudLib/aws/awsLib/temp/" + fileName)
 	if err != nil {
 		fmt.Println(err)
 		return
