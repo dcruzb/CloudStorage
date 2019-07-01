@@ -108,22 +108,34 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 		panic(err)
 	}
 
-	file, err := os.Create("C:/temp/" + fileName)
+	file, err := os.Create("./cloudLib/aws/awsLib/temp/" + fileName)
 	if err != nil {
 		panic(err)
 	}
 
 	defer file.Close()
 
-	file.Write(decFile)
-	fmt.Print(file)
+	if _, err := file.Write(decFile); err != nil {
+		panic(err)
+	}
+	if err := file.Sync(); err != nil {
+		panic(err)
+	}
 
 	fileStat, err := file.Stat()
 	if err != nil {
 		panic(err)
 	}
 
-	n, err := minioClient.PutObject(bucketName, remotePath + fileName, file, fileStat.Size(), minio.PutObjectOptions{ContentType: "application/octet-stream"})
+	fileTeste, err := os.Open("./cloudLib/aws/awsLib/temp/" + fileName);
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	defer fileTeste.Close()
+
+	n, err := minioClient.PutObject(bucketName, remotePath + fileName, fileTeste, fileStat.Size(), minio.PutObjectOptions{ContentType: "application/zip"})
 	if err != nil {
 		panic(err)
 	}
@@ -137,6 +149,12 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 	createdFile.Size = fmt.Sprintf("%f", size)    //strconv.FormatInt( fileInfo.Size(), 10)
 	createdFile.Created = time.Now()
 	createdFile.LastChecked = time.Now()
+
+	// remover arquivo da pasta temp
+	//err2 := os.Remove("./cloudLib/aws/awsLib/temp/" + filepath.Base(fileTeste.Name()))
+	//if err2 != nil {
+	//	fmt.Println(err2.Error())
+	//}
 
 	return createdFile, nil
 }
@@ -171,11 +189,6 @@ func (Aws) GetFile(fileName string, path string) (file *os.File, err error) {
 
 	file.Write(buffer)
 	fmt.Print(file.Stat())
-	//
-	//if _, err = io.Copy(file, buffer); err != nil {
-	//	fmt.Println(err)
-	//	return
-	//}
 
 	return file, nil
 }
