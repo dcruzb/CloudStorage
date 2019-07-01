@@ -1,13 +1,12 @@
 package cloudLib
 
 import (
-	"os"
 	"time"
 )
 
 type StorageFunctions interface {
 	SendFile(base64File string, fileName string, remotePath string) (createdFile CloudFile, err error)
-	GetFile(fileName string, path string) (file *os.File, err error)
+	GetFile(fileName string, path string) (base64File string, err error)
 	List(path string) (files []CloudFile, err error)
 }
 
