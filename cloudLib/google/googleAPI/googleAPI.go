@@ -218,7 +218,9 @@ func (Google) GetFile(fileName string, path string) (base64File string, err erro
 	ctx := context.Background()
 
 	// este arquivo autentica aplicação no serviço do storage da google cloud storage
-	client, err1 := storage.NewClient(ctx, option.WithCredentialsFile("C:/Users/CASA/go/src/CloudStorage/cloudLib/google/googleAPI/My First Project-41269a52f4a2.json"))
+	absPath, _ := filepath.Abs("./cloudLib/google/googleAPI/My First Project-41269a52f4a2.json")
+	fmt.Println(absPath)
+	client, err1 := storage.NewClient(ctx, option.WithCredentialsFile(absPath)) //"./CloudStorage/cloudLib/google/googleAPI/My First Project-41269a52f4a2.json"))
 	if err1 != nil {
 		log.Fatalln(err1)
 	}
@@ -265,7 +267,9 @@ func (Google) List(path string) (files []cloudLib.CloudFile, err error) {
 	ctx := context.Background()
 
 	// este arquivo autentica aplicação no serviço do storage da google cloud storage
-	client, err1 := storage.NewClient(ctx, option.WithCredentialsFile("C:/Users/CASA/go/src/CloudStorage/cloudLib/google/googleAPI/My First Project-41269a52f4a2.json"))
+	absPath, _ := filepath.Abs("./cloudLib/google/googleAPI/My First Project-41269a52f4a2.json")
+	fmt.Println(absPath)
+	client, err1 := storage.NewClient(ctx, option.WithCredentialsFile(absPath)) //"./CloudStorage/cloudLib/google/googleAPI/My First Project-41269a52f4a2.json"))
 	if err1 != nil {
 		log.Fatalln(err1)
 	}
