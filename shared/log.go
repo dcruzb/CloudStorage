@@ -6,8 +6,12 @@ import (
 	"time"
 )
 
-func LogEvent(source string, event string, action string, status string, thread string) {
-	file, err := os.OpenFile("logEvent.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+func LogEvent(log bool, source string, event string, action string, status string, thread string) {
+	if !log {
+		return
+	}
+
+	file, err := os.OpenFile("./temp/logEvent.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		lib.PrintlnError("Erro ao abrir arquivo do log para inclusão de novo evento. Erro:", err)
 		return

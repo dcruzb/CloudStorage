@@ -16,9 +16,9 @@ import (
 
 func main() {
 	for i := 0; i <= shared.SAMPLE_SIZE; i++ {
-		shared.LogEvent("cloudStorage", "main", "enviaArquivo", "iniciado", strconv.Itoa(i))
+		shared.LogEvent(true, "cloudStorage", "main", "enviaArquivo", "iniciado", strconv.Itoa(i))
 		enviaArquivo()
-		shared.LogEvent("cloudStorage", "main", "enviaArquivo", "finalizado", strconv.Itoa(i))
+		shared.LogEvent(true, "cloudStorage", "main", "enviaArquivo", "finalizado", strconv.Itoa(i))
 	}
 }
 
