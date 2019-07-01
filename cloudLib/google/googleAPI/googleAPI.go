@@ -3,6 +3,7 @@ package googleAPI
 import (
 	"CloudStorage/cloudLib"
 	"CloudStorage/shared"
+	"bufio"
 	"cloud.google.com/go/storage"
 	"context"
 	"encoding/base64"
@@ -212,7 +213,7 @@ func (Google) SendFile(base64File string, fileName string, remotePath string) (c
 	return createdFile, nil
 }
 
-func (Google) GetFile(fileName string, path string) (file *os.File, err error) {
+func (Google) GetFile(fileName string, path string) (base64File string, err error) {
 
 	ctx := context.Background()
 
@@ -238,16 +239,25 @@ func (Google) GetFile(fileName string, path string) (file *os.File, err error) {
 		log.Fatalln(err3)
 	}
 
-	file, err = os.Create("C:/temp/" + fileName)
-	if err != nil {
-		fmt.Println(err)
+	file, err2 := os.Create("./cloudLib/google/googleAPI/temp/" + fileName)
+	if err2 != nil {
+		fmt.Println(err2)
 		return
 	}
 
-	file.Write(data)
-	fmt.Print(file.Stat())
+	defer file.Close()
 
-	return file, err
+	file.Write(data)
+	//fmt.Print(file.Stat())
+
+	reader := bufio.NewReader(file)
+	content, _ := ioutil.ReadAll(reader)
+
+	// Encode as base64.
+	base64File = base64.StdEncoding.EncodeToString([]byte(content))
+	fmt.Print(base64File)
+
+	return base64File, err
 }
 
 func (Google) List(path string) (files []cloudLib.CloudFile, err error) {

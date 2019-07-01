@@ -3,7 +3,6 @@ package google
 import (
 	"CloudStorage/cloudLib"
 	"CloudStorage/cloudLib/google/googleAPI"
-	"os"
 )
 
 type GoogleFunctions struct {
@@ -14,7 +13,7 @@ func (gf GoogleFunctions) SendFile(base64File string, fileName string, path stri
 	return google.SendFile(base64File, fileName, path)
 }
 
-func (gf GoogleFunctions) GetFile(fileName string, path string) (file *os.File, err error) {
+func (gf GoogleFunctions) GetFile(fileName string, path string) (base64File string, err error) {
 	google := googleAPI.Google{}
 	return google.GetFile(fileName, path)
 }
