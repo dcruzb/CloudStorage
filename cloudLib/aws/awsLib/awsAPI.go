@@ -72,7 +72,7 @@ func (Aws) Availability() (available bool, err error) {
 	return true, nil
 }
 
-func (Aws) SendFile(base64File string, fileName string, remotePath string) (createdFile cloudLib.CloudFile, err error) {
+func (Aws) SendFile(base64File string, fileName string, remotePath string) (createdFile cloudLib.CloudFile, erro shared.RemoteError) {
 
 	endpoint := "s3.amazonaws.com"
 	accessKeyID := shared.AWS_ACCESS_KEY_ID
@@ -82,7 +82,8 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 	// Initialize minio client object.
 	minioClient, err := minio.New(endpoint, accessKeyID, secretAccessKey, useSSL)
 	if err != nil {
-		panic(err)
+		lib.PrintlnError(err)
+		return createdFile, *shared.NewRemoteError(err.Error())
 	}
 
 	log.Printf("%#v\n", minioClient) // minioClient is now setup
@@ -111,33 +112,39 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 
 	file, err := os.Create("./cloudLib/aws/awsLib/temp/" + fileName)
 	if err != nil {
-		return createdFile, err
+		lib.PrintlnError(err)
+		return createdFile, *shared.NewRemoteError(err.Error())
 	}
 
 	defer file.Close()
 
 	if _, err := file.Write(decFile); err != nil {
-		return createdFile, err
+		lib.PrintlnError(err)
+		return createdFile, *shared.NewRemoteError(err.Error())
 	}
 	if err := file.Sync(); err != nil {
-		return createdFile, err
+		lib.PrintlnError(err)
+		return createdFile, *shared.NewRemoteError(err.Error())
 	}
 
 	fileStat, err := file.Stat()
 	if err != nil {
-		return createdFile, err
+		lib.PrintlnError(err)
+		return createdFile, *shared.NewRemoteError(err.Error())
 	}
 
 	fileTeste, err := os.Open("./cloudLib/aws/awsLib/temp/" + fileName)
 	if err != nil {
-		return createdFile, err
+		lib.PrintlnError(err)
+		return createdFile, *shared.NewRemoteError(err.Error())
 	}
 
 	defer fileTeste.Close()
 
 	n, err := minioClient.PutObject(bucketName, remotePath+fileName, fileTeste, fileStat.Size(), minio.PutObjectOptions{ContentType: "application/octet-stream"})
 	if err != nil {
-		return createdFile, err
+		lib.PrintlnError(err)
+		return createdFile, *shared.NewRemoteError(err.Error())
 	}
 
 	fmt.Println("Successfully uploaded bytes: ", n)
@@ -156,7 +163,7 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 	//	fmt.Println(err2.Error())
 	//}
 
-	return createdFile, nil
+	return createdFile, erro
 }
 
 func (Aws) GetFile(fileName string, path string) (base64File string, err error) {

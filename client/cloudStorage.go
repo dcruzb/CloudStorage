@@ -11,39 +11,22 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 func main() {
-	/*aws := aws.AwsFunctions{}
-	//aws.Price(14.0)
-
-	fileTeste, err := os.Open("C:/Users/CASA/Desktop/mid-cloud.zip");
-	if err != nil {
-		fmt.Println(err)
-		return
+	for i := 0; i <= shared.SAMPLE_SIZE; i++ {
+		shared.LogEvent("cloudStorage", "main", "enviaArquivo", "iniciado", strconv.Itoa(i))
+		enviaArquivo()
+		shared.LogEvent("cloudStorage", "main", "enviaArquivo", "finalizado", strconv.Itoa(i))
 	}
-	defer fileTeste.Close()
+}
 
-	aws.SendFile(fileTeste, "cloudstorage/")
-
-	return
-
-	google := google.GoogleFunctions{}
-	fileGoogle, err2 := os.Open("C:/Users/CASA/Desktop/mid-cloud.zip");
-	if err2 != nil {
-		fmt.Println(err2)
-		return
-	}
-	defer fileGoogle.Close()
-
-	google.SendFile(fileGoogle, "cloudstorage/")
-
-	return*/
-
+func enviaArquivo() {
 	lib.PrintlnInfo("Initializing client CloudStorage")
 
 	lp := dist.NewLookupProxy(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT)
-	cp, err := lp.Lookup("GoogleCloudFunctions") //"cloudFunctions")
+	cp, err := lp.Lookup("awsCloudFunctions") //"googleCloudFunctions") //
 	lib.FailOnError(err, "Error at lookup.")
 	err = lp.Close()
 	lib.FailOnError(err, "Error at closing lookup")
@@ -67,9 +50,10 @@ func main() {
 	encoded := base64.StdEncoding.EncodeToString(content)
 
 	cloudfile, err := sp.SendFile(encoded, filepath.Base(fileTeste.Name()), "cloudstorage/")
-	lib.FailOnError(err, "Error sending file.")
+	lib.FailOnError(err, "Error sending file")
 
 	lib.PrintlnInfo("File sent successfully. File:", cloudfile.Id, "Cloud:", cloudfile.Cloud)
 
 	lib.PrintlnInfo("Fim do client CloudStorage")
+
 }

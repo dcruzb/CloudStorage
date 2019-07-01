@@ -1,6 +1,7 @@
 package cloudLib
 
 import (
+	"CloudStorage/shared"
 	dist "github.com/dcbCIn/MidCloud/distribution"
 	"github.com/dcbCIn/MidCloud/lib"
 	"os"
@@ -61,12 +62,18 @@ func (sfp StorageFunctionsProxy) SendFile(base64File string, fileName string, pa
 	_, err = lib.Decode(termination.Result.([]interface{})[0].(map[string]interface{}), &createdFileValue)
 	createdFile = createdFileValue.Elem().Interface().(CloudFile)
 
+	var erro shared.RemoteError
+	//err = mapstructure.Decode(termination.Result.([]interface{})[1], &erro)
+	errValue := reflect.New(reflect.ValueOf(erro).Type())
+	_, err = lib.Decode(termination.Result.([]interface{})[1].(map[string]interface{}), &errValue)
+	err = errValue.Elem().Interface().(error)
+
 	//err = termination.Result.([]interface{})[1].(error)
 	if err != nil {
 		return createdFile, err
 	}
 
-	return createdFile, nil
+	return createdFile, erro
 }
 
 func (sfp StorageFunctionsProxy) GetFile(fileName string, path string) (file *os.File, err error) {
