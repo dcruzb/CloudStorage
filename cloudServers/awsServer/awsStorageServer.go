@@ -21,8 +21,7 @@ func main() {
 	var inv dist.InvokerImpl
 	inv.Register(2000, &aws.AwsFunctions{})
 
-	// TODO alterar para pegar initialConnections da configuração
-	err = inv.Invoke(shared.AWS_SERVER_PORT, 5)
+	err = inv.Invoke(shared.AWS_SERVER_PORT, shared.CONNECTIONS)
 	lib.FailOnError(err, "Error calling invoker.")
 
 	lib.PrintlnInfo("Fim do Servidor AwsStorage")
