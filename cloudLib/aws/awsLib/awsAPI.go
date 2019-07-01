@@ -72,7 +72,7 @@ func (Aws) Availability() (available bool, err error) {
 	return true, nil
 }
 
-func (Aws) SendFile(base64File string, fileName string, remotePath string) (createdFile cloudLib.CloudFile, erro shared.RemoteError) {
+func (Aws) SendFile(base64File string, fileName string, remotePath string) (createdFile cloudLib.CloudFile, err error) {
 
 	endpoint := "s3.amazonaws.com"
 	accessKeyID := shared.AWS_ACCESS_KEY_ID
@@ -86,7 +86,7 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 		return createdFile, *shared.NewRemoteError(err.Error())
 	}
 
-	log.Printf("%#v\n", minioClient) // minioClient is now setup
+	lib.PrintlnDebug(minioClient) // minioClient is now setup
 
 	// Make a new bucket called mymusic.
 	bucketName := "ufpestorage"
@@ -97,17 +97,19 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 		// Check to see if we already own this bucket (which happens if you run this twice)
 		exists, err := minioClient.BucketExists(bucketName)
 		if err == nil && exists {
-			log.Printf("Já existe %s\n", bucketName)
+			lib.PrintlnDebug("Já existe %s\n", bucketName)
 		} else {
-			panic(err)
+			lib.PrintlnError(err)
+			return createdFile, *shared.NewRemoteError(err.Error())
 		}
 	} else {
-		log.Printf("Criado com sucesso %s\n", bucketName)
+		lib.PrintlnDebug("Criado com sucesso %s\n", bucketName)
 	}
 
 	decFile, err := base64.StdEncoding.DecodeString(base64File)
 	if err != nil {
-		panic(err)
+		lib.PrintlnError(err)
+		return createdFile, *shared.NewRemoteError(err.Error())
 	}
 
 	file, err := os.Create("./temp/" + fileName)
@@ -163,7 +165,7 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 	//	fmt.Println(err2.Error())
 	//}
 
-	return createdFile, erro
+	return createdFile, nil
 }
 
 func (Aws) GetFile(fileName string, path string) (base64File string, err error) {

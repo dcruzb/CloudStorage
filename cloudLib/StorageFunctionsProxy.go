@@ -62,18 +62,20 @@ func (sfp StorageFunctionsProxy) SendFile(base64File string, fileName string, pa
 	_, err = lib.Decode(termination.Result.([]interface{})[0].(map[string]interface{}), &createdFileValue)
 	createdFile = createdFileValue.Elem().Interface().(CloudFile)
 
-	var erro shared.RemoteError
-	//err = mapstructure.Decode(termination.Result.([]interface{})[1], &erro)
-	errValue := reflect.New(reflect.ValueOf(erro).Type())
-	_, err = lib.Decode(termination.Result.([]interface{})[1].(map[string]interface{}), &errValue)
-	err = errValue.Elem().Interface().(error)
+	var remoteError shared.RemoteError
+	if termination.Result.([]interface{})[1] != nil {
+		//err = mapstructure.Decode(termination.Result.([]interface{})[1], &erro)
+		errValue := reflect.New(reflect.ValueOf(remoteError).Type())
+		_, err = lib.Decode(termination.Result.([]interface{})[1].(map[string]interface{}), &errValue)
+		err = errValue.Elem().Interface().(error)
 
-	//err = termination.Result.([]interface{})[1].(error)
-	if err != nil {
-		return createdFile, err
+		//err = termination.Result.([]interface{})[1].(error)
+		if err != nil {
+			return createdFile, err
+		}
 	}
 
-	return createdFile, erro
+	return createdFile, nil
 }
 
 func (sfp StorageFunctionsProxy) GetFile(fileName string, path string) (file *os.File, err error) {
