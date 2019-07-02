@@ -136,15 +136,17 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 		return createdFile, *shared.NewRemoteError(err.Error())
 	}
 
-	fileTeste, err := os.Open("./temp/" + fileName)
-	if err != nil {
-		lib.PrintlnError(err)
-		return createdFile, *shared.NewRemoteError(err.Error())
-	}
+	//fileTeste, err := os.Open("./temp/" + fileName)
+	//if err != nil {
+	//	lib.PrintlnError(err)
+	//	return createdFile, *shared.NewRemoteError(err.Error())
+	//}
 
-	defer fileTeste.Close()
+	//defer fileTeste.Close()
 
-	n, err := minioClient.PutObject(bucketName, remotePath+fileName, fileTeste, fileStat.Size(), minio.PutObjectOptions{ContentType: "application/octet-stream"})
+	file.Seek(0, 0)
+
+	n, err := minioClient.PutObject(bucketName, remotePath+fileName, file, fileStat.Size(), minio.PutObjectOptions{ContentType: "application/octet-stream"})
 	if err != nil {
 		lib.PrintlnError(err)
 		return createdFile, *shared.NewRemoteError(err.Error())
