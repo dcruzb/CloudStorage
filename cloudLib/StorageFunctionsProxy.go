@@ -6,6 +6,7 @@ import (
 	"github.com/dcbCIn/MidCloud/lib"
 	"os"
 	"reflect"
+	"time"
 )
 
 type StorageFunctionsProxy struct {
@@ -53,7 +54,9 @@ func (sfp StorageFunctionsProxy) Availability() (available bool, err error) {
 
 func (sfp StorageFunctionsProxy) SendFile(base64File string, fileName string, path string) (createdFile CloudFile, err error) {
 	inv := *dist.NewInvocation(sfp.ObjectId, sfp.host, sfp.port, lib.FunctionName(), []interface{}{base64File, fileName, path})
+	dtStart := time.Now()
 	termination, err := sfp.requestor.Invoke(inv)
+	shared.LogEvent(shared.LOG, "StorageFunctionsProxy", "sendFile", "sfp.requestor.Invoke", "finished", "none", dtStart, time.Since(dtStart))
 	if err != nil {
 		return createdFile, err
 	}

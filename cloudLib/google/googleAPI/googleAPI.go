@@ -99,7 +99,7 @@ func (Google) Availability() (available bool, err error) {
 }
 
 func (Google) SendFile(base64File string, fileName string, remotePath string) (createdFile cloudLib.CloudFile, err error) {
-
+	dtStart := time.Now()
 	/*dec, err := base64.StdEncoding.DecodeString(base64File)
 	if err != nil {
 		panic(err)
@@ -193,6 +193,7 @@ func (Google) SendFile(base64File string, fileName string, remotePath string) (c
 	if err4 := w.Close(); err != nil {
 		log.Fatalln(err4)
 	}
+	shared.LogEvent(shared.LOG, "googleAPI", "SendFile", "*", "finished", "none", dtStart, time.Since(dtStart))
 
 	//fileInfo, _ := decFile.Stat()
 	//if err != nil {

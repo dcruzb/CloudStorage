@@ -12,22 +12,24 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 )
 
 func main() {
-	for i := 0; i <= shared.SAMPLE_SIZE; i++ {
-		shared.LogEvent(true, "cloudStorage", "main", "enviaArquivo", "iniciado", strconv.Itoa(i))
-		enviaArquivo()
-		shared.LogEvent(true, "cloudStorage", "main", "enviaArquivo", "finalizado", strconv.Itoa(i))
+	for i := 1; i <= shared.SAMPLE_SIZE; i++ {
+		dtStart := time.Now()
+		sendFile()
+		shared.LogEvent(shared.LOG, "cloudStorage", "main", "sendFile", "finalizado", strconv.Itoa(i), dtStart, time.Since(dtStart))
+		time.Sleep(shared.WAIT)
 	}
 }
 
-func enviaArquivo() {
+func sendFile() {
 	lib.PrintlnInfo("Initializing client CloudStorage")
 
 	lp := dist.NewLookupProxy(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT)
-	cp, err := lp.Lookup("awsCloudFunctions") //"googleCloudFunctions") //
-	lib.FailOnError(err, "Error at lookup.")
+	cp, err := lp.Lookup("googleCloudFunctions") //"googleCloudFunctions") //
+	lib.FailOnError(err, "Error at lookup")
 	err = lp.Close()
 	lib.FailOnError(err, "Error at closing lookup")
 
@@ -35,24 +37,26 @@ func enviaArquivo() {
 	sp = *cloudLib.NewStorageFunctionsProxy(cp.Ip, cp.Port, cp.ObjectId)
 	defer sp.Close()
 
-	fileTeste, err := os.Open("C:/Users/dcruz/OneDrive/Documents/Mestrado/Download artigos para Fagner/preview.mini.jpg") //p426-hilton.pdf") //
+	file, err := os.Open("C:/Users/dcruz/OneDrive/Documents/Mestrado/Download artigos para Fagner/preview.mini.jpg") //p426-hilton.pdf") //
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	defer fileTeste.Close()
+	defer file.Close()
 
 	// Read entire JPG into byte slice.
-	reader := bufio.NewReader(fileTeste)
+	reader := bufio.NewReader(file)
 	content, _ := ioutil.ReadAll(reader)
 
 	// Encode as base64.
 	encoded := base64.StdEncoding.EncodeToString(content)
 
-	cloudfile, err := sp.SendFile(encoded, filepath.Base(fileTeste.Name()), "cloudstorage/")
+	dtStart := time.Now()
+	cloudFile, err := sp.SendFile(encoded, filepath.Base(file.Name()), "cloudstorage/")
+	shared.LogEvent(shared.LOG, "cloudStorage", "sendFile", "sp.SendFile", "finished", "none", dtStart, time.Since(dtStart))
 	lib.FailOnError(err, "Error sending file")
 
-	lib.PrintlnInfo("File sent successfully. File:", cloudfile.Id, "Cloud:", cloudfile.Cloud)
+	lib.PrintlnInfo("File sent successfully. File:", cloudFile.Id, "Cloud:", cloudFile.Cloud)
 
 	lib.PrintlnInfo("Fim do client CloudStorage")
 
