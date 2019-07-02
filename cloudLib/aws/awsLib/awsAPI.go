@@ -73,6 +73,7 @@ func (Aws) Availability() (available bool, err error) {
 }
 
 func (Aws) SendFile(base64File string, fileName string, remotePath string) (createdFile cloudLib.CloudFile, err error) {
+	dtStart := time.Now()
 
 	endpoint := "s3.amazonaws.com"
 	accessKeyID := shared.AWS_ACCESS_KEY_ID
@@ -148,6 +149,7 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 		lib.PrintlnError(err)
 		return createdFile, *shared.NewRemoteError(err.Error())
 	}
+	shared.LogEvent(shared.LOG, "awsAPI", "SendFile", "*", "finished", "none", dtStart, time.Since(dtStart))
 
 	fmt.Println("Successfully uploaded bytes: ", n)
 

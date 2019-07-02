@@ -24,5 +24,5 @@ func main() {
 	err = inv.Invoke(shared.GOOGLE_SERVER_PORT, shared.CONNECTIONS)
 	lib.FailOnError(err, "Error calling invoker.")
 
-	lib.PrintlnInfo("Fim do Servidor GoogleStorage")
+	lib.PrintlnInfo("GoogleStorage server finished")
 }
