@@ -123,7 +123,6 @@ func (Google) SendFile(base64File string, fileName string, remotePath string) (c
 
 	// este arquivo autentica aplicação no serviço do storage da google cloud storage
 	absPath, _ := filepath.Abs("./cloudLib/google/googleAPI/My First Project-41269a52f4a2.json")
-	fmt.Println(absPath)
 	client, err1 := storage.NewClient(ctx, option.WithCredentialsFile(absPath)) //"./CloudStorage/cloudLib/google/googleAPI/My First Project-41269a52f4a2.json"))
 	if err1 != nil {
 		log.Fatalln(err1)
@@ -142,7 +141,7 @@ func (Google) SendFile(base64File string, fileName string, remotePath string) (c
 	if err3 != nil {
 		log.Fatalln(err3)
 	}
-	fmt.Printf("bucket %s, created at %s, is located in %s with storage class %s\n", attrs.Name, attrs.Created, attrs.Location, attrs.StorageClass)
+	lib.PrintlnInfo("bucket", attrs.Name, " created at ", attrs.Created, ", is located in ", attrs.Location, " with storage class ", attrs.StorageClass)
 
 	obj := bkt.Object(remotePath + fileName)
 
@@ -193,7 +192,7 @@ func (Google) SendFile(base64File string, fileName string, remotePath string) (c
 	if err4 := w.Close(); err != nil {
 		log.Fatalln(err4)
 	}
-	shared.LogEvent(shared.LOG, "googleAPI", "SendFile", "*", "finished", "none", dtStart, time.Since(dtStart))
+	shared.LogEvent(shared.LOG, "googleAPI", "SendFile", "decodeAndWrite", "finished", "none", dtStart, time.Since(dtStart))
 
 	//fileInfo, _ := decFile.Stat()
 	//if err != nil {
@@ -208,8 +207,6 @@ func (Google) SendFile(base64File string, fileName string, remotePath string) (c
 	createdFile.Size = fmt.Sprintf("%f", size)    //strconv.FormatInt( fileInfo.Size(), 10)
 	createdFile.Created = time.Now()
 	createdFile.LastChecked = time.Now()
-
-	fmt.Println("CreatedFile", createdFile)
 
 	return createdFile, nil
 }

@@ -149,9 +149,9 @@ func (Aws) SendFile(base64File string, fileName string, remotePath string) (crea
 		lib.PrintlnError(err)
 		return createdFile, *shared.NewRemoteError(err.Error())
 	}
-	shared.LogEvent(shared.LOG, "awsAPI", "SendFile", "*", "finished", "none", dtStart, time.Since(dtStart))
+	shared.LogEvent(shared.LOG, "awsAPI", "SendFile", "decodeAndWrite", "finished", "none", dtStart, time.Since(dtStart))
 
-	fmt.Println("Successfully uploaded bytes: ", n)
+	lib.PrintlnDebug("Successfully uploaded bytes: ", n)
 
 	createdFile.Id = fileName
 	createdFile.Cloud = "AWS"

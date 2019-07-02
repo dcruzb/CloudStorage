@@ -16,19 +16,21 @@ import (
 )
 
 func main() {
+	dtBegin := time.Now()
 	for i := 1; i <= shared.SAMPLE_SIZE; i++ {
 		dtStart := time.Now()
 		sendFile()
-		shared.LogEvent(shared.LOG, "cloudStorage", "main", "sendFile", "finalizado", strconv.Itoa(i), dtStart, time.Since(dtStart))
+		shared.LogEvent(shared.LOG, "cloudStorage", "main", "sendFile", "finished", strconv.Itoa(i), dtStart, time.Since(dtStart))
 		time.Sleep(shared.WAIT)
 	}
+	shared.LogEvent(shared.LOG, "cloudStorage", "main", "everything", "finished", "none", dtBegin, time.Since(dtBegin))
 }
 
 func sendFile() {
 	lib.PrintlnInfo("Initializing client CloudStorage")
 
 	lp := dist.NewLookupProxy(shared.NAME_SERVER_IP, shared.NAME_SERVER_PORT)
-	cp, err := lp.Lookup("googleCloudFunctions") //"googleCloudFunctions") //
+	cp, err := lp.Lookup("cloudFunctions") //"googleCloudFunctions") //
 	lib.FailOnError(err, "Error at lookup")
 	err = lp.Close()
 	lib.FailOnError(err, "Error at closing lookup")
