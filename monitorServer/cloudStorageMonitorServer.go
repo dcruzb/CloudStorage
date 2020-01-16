@@ -1,7 +1,7 @@
 package main
 
 import (
-	"CloudStorage/shared"
+	"github.com/dcbCIn/CloudStorage/shared"
 	"github.com/dcbCIn/MidCloud/lib"
 	"github.com/dcbCIn/MidCloudMAPEK"
 	"sync"

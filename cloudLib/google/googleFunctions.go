@@ -1,8 +1,8 @@
 package google
 
 import (
-	"CloudStorage/cloudLib"
-	"CloudStorage/cloudLib/google/googleAPI"
+	"github.com/dcbCIn/CloudStorage/cloudLib"
+	"github.com/dcbCIn/CloudStorage/cloudLib/google/googleAPI"
 )
 
 type GoogleFunctions struct {

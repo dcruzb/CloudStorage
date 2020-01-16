@@ -1,8 +1,8 @@
 package aws
 
 import (
-	"CloudStorage/cloudLib"
-	"CloudStorage/cloudLib/aws/awsLib"
+	"github.com/dcbCIn/CloudStorage/cloudLib"
+	"github.com/dcbCIn/CloudStorage/cloudLib/aws/awsLib"
 )
 
 type AwsFunctions struct {

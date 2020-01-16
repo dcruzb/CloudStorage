@@ -1,8 +1,8 @@
 package main
 
 import (
-	"CloudStorage/cloudLib/aws"
-	"CloudStorage/shared"
+	"github.com/dcbCIn/CloudStorage/cloudLib/aws"
+	"github.com/dcbCIn/CloudStorage/shared"
 	"github.com/dcbCIn/MidCloud/distribution"
 	"github.com/dcbCIn/MidCloud/lib"
 	"github.com/dcbCIn/MidCloud/services/common"

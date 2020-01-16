@@ -1,7 +1,7 @@
 package cloudLib
 
 import (
-	"CloudStorage/shared"
+	"github.com/dcbCIn/CloudStorage/shared"
 	dist "github.com/dcbCIn/MidCloud/distribution"
 	"github.com/dcbCIn/MidCloud/lib"
 	"os"

@@ -1,12 +1,12 @@
 package awsLib
 
 import (
-	"CloudStorage/cloudLib"
-	"CloudStorage/shared"
 	"bufio"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/dcbCIn/CloudStorage/cloudLib"
+	"github.com/dcbCIn/CloudStorage/shared"
 	"github.com/dcbCIn/MidCloud/lib"
 	"github.com/minio/minio-go"
 	"io/ioutil"

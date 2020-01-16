@@ -1,11 +1,11 @@
 package main
 
 import (
-	"CloudStorage/cloudLib"
-	"CloudStorage/shared"
 	"bufio"
 	"encoding/base64"
 	"fmt"
+	"github.com/dcbCIn/CloudStorage/cloudLib"
+	"github.com/dcbCIn/CloudStorage/shared"
 	dist "github.com/dcbCIn/MidCloud/distribution"
 	"github.com/dcbCIn/MidCloud/lib"
 	"io/ioutil"

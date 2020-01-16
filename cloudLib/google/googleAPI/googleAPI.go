@@ -1,8 +1,6 @@
 package googleAPI
 
 import (
-	"CloudStorage/cloudLib"
-	"CloudStorage/shared"
 	"bufio"
 	"cloud.google.com/go/storage"
 	"context"
@@ -10,6 +8,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/dcbCIn/CloudStorage/cloudLib"
+	"github.com/dcbCIn/CloudStorage/shared"
 	"github.com/dcbCIn/MidCloud/lib"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
